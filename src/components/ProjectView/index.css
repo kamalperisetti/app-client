@@ -1,0 +1,50 @@
+/* .months-con {
+  width: 80%;
+  position: relative;
+}
+
+.months {
+  display: flex;
+  padding-left: 0px;
+  border: 1px solid #b2b3b5;
+  list-style: none;
+  margin-top: 0px;
+  margin: 0px;
+}
+
+.each-month {
+  width: 22%;
+  list-style: none;
+  border: 1px solid #f1f1f2;
+  padding-left: 0px;
+  margin: 0px;
+}
+
+.gap-con {
+  background-color: white;
+  height: 30px;
+  border: 1px solid #e8e8e9;
+  text-align: center;
+  padding-top: 5px;
+}
+
+.month-head {
+  background-color: #736a66;
+  padding-left: 0px;
+  height: 30px;
+  text-align: center;
+  padding-top: 5px;
+  color: white;
+}
+
+.empty-con {
+  background-color: #d8d9da;
+  height: 30px;
+  border: 1px solid #e8e8e9;
+  text-align: center;
+  padding-top: 5px;
+}
+
+.projectCard {
+  width: 80;
+} */

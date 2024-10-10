@@ -2,8 +2,6 @@
   background-color: #ffffff;
   height: 70%;
   width: 80%;
-  margin-top: 40px;
-  margin-left: 40px;
 }
 .time-container {
   display: flex;
@@ -11,6 +9,8 @@
   align-items: center;
   margin-top: 0px;
   padding: 0px 20px 0px 20px;
+  /* tooo */
+  height: 6%;
 }
 .logo-image {
   height: 50px;
@@ -25,33 +25,31 @@
 .resource-card-main-container {
   display: flex;
   padding: 0 20px 0 20px;
+  height: 45vh;
 }
 .cards {
-  height: 190px;
+  height: 120px;
   border: 1px solid black;
   width: 98%;
   display: flex;
+  background-color: #ffffff;
   justify-content: center;
   margin: 2px;
   align-items: center;
+  border-radius: 8px;
+  /* padding: 10px; */
 }
 .card1 {
-  border-radius: 8px 8px 0px 0px;
-  border-bottom: 0;
   position: absolute;
   top: 0px;
 }
 .card2 {
-  border-radius: 8px 8px 0px 0px;
   position: absolute;
-  border-bottom: 0;
-
-  top: 130px;
+  top: 110px;
 }
 .card3 {
-  border-radius: 8px;
   position: absolute;
-  top: 280px;
+  top: 220px;
 }
 .cards-container {
   position: relative;
@@ -59,17 +57,14 @@
 }
 .resource-card-container {
   display: flex;
-  /* flex-direction: column; */
   border: 1px solid black;
   padding: 0px;
   height: 46px;
   width: 75%;
-  margin-bottom: 15px;
   justify-content: center;
   align-items: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   background-color: #ffffff;
-  margin: 15px 0 0 15px;
   transition: transform 0.2s ease-in-out;
 }
 

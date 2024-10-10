@@ -33,7 +33,6 @@ function App() {
 
   return (
     <div className="background-image">
-      {}
       <Project resourceCard={resourceCard} projectId={projectId} updateResourceCards={updateResourceCards} />
     </div>
   );

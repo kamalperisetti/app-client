@@ -121,8 +121,8 @@ const Project = (props: ProjectProps) => {
               className="resource-card-container"
               style={{
                 position: 'absolute',
-                top: `${cardIndex * 30}px`,
-                left: `${cardIndex * 25}px`,
+                top: cardIndex === 0 ? '8px' : `${cardIndex * 30}px`,
+                left: cardIndex === 0 ? '10px' : `${cardIndex * 25}px`,
                 zIndex: cardIndex + 1,
               }}
             >
@@ -180,6 +180,7 @@ const Project = (props: ProjectProps) => {
         <h3 className="plan-title">Project Plan</h3>
         <img className="logo-image" src={logo} alt="company-logo" />
       </div>
+      {/* <ProjectView /> */}
       <div>
         {resourceCard !== undefined && (
           <div className="resource-card-main-container">

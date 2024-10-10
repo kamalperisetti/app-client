@@ -1,0 +1,181 @@
+.project-display {
+  background-color: #ffffff;
+  height: 70%;
+  width: 80%;
+  margin-top: 40px;
+  margin-left: 40px;
+}
+.time-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0px;
+  padding: 0px 20px 0px 20px;
+}
+.logo-image {
+  height: 50px;
+}
+
+.plan-title {
+  color: rgb(108, 111, 138);
+  font-weight: bold;
+  margin: 0px;
+}
+
+.resource-card-main-container {
+  display: flex;
+  padding: 0 20px 0 20px;
+}
+.cards {
+  height: 190px;
+  border: 1px solid black;
+  width: 98%;
+  display: flex;
+  justify-content: center;
+  margin: 2px;
+  align-items: center;
+}
+.card1 {
+  border-radius: 8px 8px 0px 0px;
+  border-bottom: 0;
+  position: absolute;
+  top: 0px;
+}
+.card2 {
+  border-radius: 8px 8px 0px 0px;
+  position: absolute;
+  border-bottom: 0;
+
+  top: 130px;
+}
+.card3 {
+  border-radius: 8px;
+  position: absolute;
+  top: 280px;
+}
+.cards-container {
+  position: relative;
+  width: 80%;
+}
+.resource-card-container {
+  display: flex;
+  /* flex-direction: column; */
+  border: 1px solid black;
+  padding: 0px;
+  height: 46px;
+  width: 75%;
+  margin-bottom: 15px;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+  margin: 15px 0 0 15px;
+  transition: transform 0.2s ease-in-out;
+}
+
+.resource-card-container:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.name-and-heart-container {
+  display: flex;
+  flex-direction: column;
+  width: 60%;
+  text-align: center;
+  flex-grow: 1;
+}
+.skill-holder-name {
+  padding: 0 0 0 3px;
+  margin: 0px 0px;
+}
+.name-and-heart {
+  color: red;
+  margin-top: 0px;
+  font-size: 20px;
+}
+.month-and-skill-container {
+  background-color: red;
+  height: 46px;
+  width: 30px;
+  padding: 0 0 0 8px;
+}
+.month-details {
+  margin: 0 0 0 5px;
+  color: #ffffff;
+  font-size: 16px;
+  padding: 0;
+}
+.month-and-skill-heart {
+  color: #ffffff;
+  font-size: 16px;
+  margin-top: 0px;
+  padding: 0;
+}
+
+.request-btn-container {
+  position: absolute;
+  z-index: 5;
+}
+.request-name-and-heart-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 60%;
+}
+.request-name-and-heart {
+  color: black;
+  font-size: 20px;
+  margin-bottom: 5px;
+}
+.request-month-and-skill-heart {
+  font-size: 16px;
+  color: #ffffff;
+}
+.request-month-and-skill-container {
+  background-color: black;
+  height: 46px;
+  width: 35px;
+  padding: 0 0 0 5px;
+}
+.request-btn {
+  background-color: rgb(191, 191, 191);
+  border: none;
+  border-radius: 3px;
+  padding: 8px;
+  color: rgb(99, 99, 99);
+}
+.cancel-request-btn {
+  background-color: rgb(246, 58, 58);
+  font-size: '8px';
+  margin-left: '3px';
+}
+.request-resource-card-container {
+  display: flex;
+  border: 1px solid black;
+  padding: 0px;
+  height: 46px;
+  width: 60%;
+  margin-bottom: 15px;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+  margin: 15px 0 0 15px;
+  transition: transform 0.2s ease-in-out;
+  position: absolute;
+  top: 45px;
+  z-index: 5;
+}
+
+.cross-icon-container {
+  width: 16px;
+  height: 40px;
+  padding: 3px;
+  background-color: #ffffff;
+}
+.cross-icon {
+  font-size: 10px;
+  margin-top: 15px;
+}

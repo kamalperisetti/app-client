@@ -23,8 +23,8 @@ function App() {
     console.log(response, 'ALLL');
     setProjectId(response[0].id);
     setResourceCard(response[0].cards);
-    setProjectId1(response[1].id);
-    setResourceCard1(response[1].cards);
+    // setProjectId1(response[1].id);
+    // setResourceCard1(response[1].cards);
     setProject(response);
   };
 
@@ -39,9 +39,7 @@ function App() {
   return (
     <div className="background-image">
       {projects.map((each: ProjectPlane) => (
-        <div key={each.id}>
-          <Project resourceCard={each.cards} projectId={each.id} updateResourceCards={updateResourceCards} />
-        </div>
+        <Project key={each.id} resourceCard={each.cards} projectId={each.id} updateResourceCards={updateResourceCards} />
       ))}
       {/* <Project resourceCard={resourceCard} projectId={projectId} updateResourceCards={updateResourceCards} />
       <Project resourceCard={resourceCard1} projectId={projectId1} updateResourceCards={updateResourceCards} /> */}

@@ -39,6 +39,9 @@
 }
 
 .empty-con {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background-color: #d8d9da;
   height: 30px;
   border: 1px solid #e8e8e9;

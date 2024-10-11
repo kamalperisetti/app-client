@@ -8,11 +8,11 @@
 .project-head {
   background-color: #d62413;
   color: white;
-  height: 13%;
+
   display: flex;
   justify-content: space-around;
   box-sizing: border-box;
-  height: 24%;
+  height: 27%;
   gap: 5px;
 }
 
@@ -24,12 +24,13 @@
   border: 0.5px;
 }
 
-.time-container {
+.time-container-card {
   display: flex;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
-  gap: 10px;
-  margin-top: 4px;
+  height: 100%;
+  gap: 5px;
 }
 
 .each-demand {

@@ -19,6 +19,7 @@
     "@types/sockjs-client": "^1.5.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-draggable": "^4.4.6",
     "react-icons": "^5.3.0",
     "react-toastify": "^10.0.5",
     "sockjs-client": "^1.6.1"

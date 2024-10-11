@@ -1,6 +1,6 @@
 .project-display {
   background-color: #ffffff;
-  height: 80vh;
+  min-height: 650px;
   width: 80%;
   margin-bottom: 30px;
 }
@@ -55,6 +55,7 @@
 .cards-container {
   position: relative;
   width: 14%;
+  display: none;
 }
 .resource-card-container {
   display: flex;

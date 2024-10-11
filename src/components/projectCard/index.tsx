@@ -1,4 +1,4 @@
-import { MouseEvent, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 import { FaRegClock } from 'react-icons/fa';
 import { FaDiamond, FaHeart } from 'react-icons/fa6';
@@ -31,10 +31,6 @@ const changeDataFormate = (data: projectType) => {
 
 const ProjectCard = (props: projectPropsType) => {
   const { single } = props;
-  const [isDragging, setIsDragging] = useState<boolean>(false); // Track drag state
-  const [startX, setStartX] = useState<number>(0); // Track initial mouse position
-  const [marginLeft, setMarginLeft] = useState<number>((single.initialStartTime - 2) * 157); // State for left margin
-  const [columnNumber, setColumnNumber] = useState<number>(1); // State for column number
 
   let diff = single.initialFinishTime - single.initialStartTime;
   // max width as percantage
@@ -45,59 +41,17 @@ const ProjectCard = (props: projectPropsType) => {
 
   //Get length of
   const dataFormatLength = dataFormat.length;
-
-  const maxColumns = 5; // Max columns (limit for drag range)
-  const columnWidth = 150; // Width between columns
-
-  const minMargin = 0; // Minimum margin (leftmost boundary)
-  const maxMargin = (maxColumns - 0.9) * columnWidth; // Max margin (rightmost boundary)
-
-  const handleMouseDown = (event: MouseEvent<HTMLDivElement>) => {
-    setIsDragging(true); // Start dragging
-    setStartX(event.clientX); // Track where the drag starts
-  };
-
-  const handleMouseMove = (event: MouseEvent<HTMLDivElement>) => {
-    if (!isDragging) return;
-
-    const deltaX = event.clientX - startX; // Calculate how far the mouse has moved
-    const newMarginLeft = marginLeft + deltaX; // Calculate new margin
-
-    // Restrict movement within the min/max margins
-    if (newMarginLeft >= minMargin && newMarginLeft <= maxMargin) {
-      setMarginLeft(newMarginLeft); // Update the margin
-      const newColumnNumber = Math.round(newMarginLeft / columnWidth) + 1;
-      setColumnNumber(newColumnNumber); // Update column number
-    }
-
-    setStartX(event.clientX); // Update the start position for smooth dragging
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false); // Stop dragging
-  };
+  localStorage.setItem('projectLength', JSON.stringify(dataFormatLength));
 
   return (
-    <div
-      className="project-card-con"
-      style={{
-        width: `${dataFormatLength * 14.2}%`,
-        cursor: isDragging ? 'grabbing' : 'grab',
-        marginLeft: `${marginLeft}px`,
-        position: 'absolute',
-      }}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseUp}
-    >
+    <>
       <nav className="project-head" style={{ fontSize: `${dataFormatLength * 3.5}px` }}>
-        <h2 style={{ fontSize: '15px', fontFamily: 'sans-serif' }}>{single.name}</h2>
-        <div className="time-container">
-          <FaRegClock style={{ fontSize: `${dataFormatLength * 5.5}px` }} />
-          <h2 style={{ fontSize: `${dataFormatLength * 5.5}px` }}>
-            {single.initialStartTime} - {single.initialFinishTime}
-          </h2>
+        <h2 style={{ fontSize: `12px`, fontFamily: 'sans-serif' }}>{single.name}</h2>
+        <div className="time-container-card">
+          <FaRegClock style={{ fontSize: `${dataFormatLength * 5}px` }} />
+          <p style={{ fontSize: `${dataFormatLength * 5}px` }}>
+            {single.initialStartTime}- {single.initialFinishTime}
+          </p>
         </div>
       </nav>
       <ul className="months">
@@ -128,7 +82,7 @@ const ProjectCard = (props: projectPropsType) => {
           </ul>
         ))}
       </ul>
-    </div>
+    </>
   );
 };
 

@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import Draggable from 'react-draggable';
 import ProjectCard from '../projectCard';
-import { ProjectPlane } from '../Types/types';
+import { projectType } from '../Types/types';
 import './index.css';
 
 const months: number[] = [];
@@ -9,27 +9,34 @@ for (let i = 2; i <= 8; i++) {
   months.push(i);
 }
 
-const ProjectView = () => {
-  const [projectItem, setProject] = useState<ProjectPlane[]>([]);
-  const [currentColumn, setCurrentColumn] = useState(2); // Initialize column to 2
+interface ProposType {
+  project: projectType;
+  projectStartTime: number;
+}
+
+const ProjectView = (props: ProposType) => {
+  const { project, projectStartTime } = props;
+  const [projectItem, setProject] = useState<projectType>(project);
+  const [currentColumn, setCurrentColumn] = useState(project.initialStartTime); // Initialize column to 2
+  console.log(projectStartTime, 'PP');
   const cardSpan = 3;
   // const cardSpan = 4; // Card spans 3
   const nodeRef = useRef(null); // Ref for draggable card
 
-  useEffect(() => {
-    const getProjectDetails = async () => {
-      const url = 'http://localhost:8080/games/game1/projectPlans?ownerId=bharath1';
-      const request = await fetch(url);
-      const jsonRes = await request.json();
+  // useEffect(() => {
+  //   const getProjectDetails = async () => {
+  //     const url = 'http://localhost:8080/games/game1/projectPlans?ownerId=bharath1';
+  //     const request = await fetch(url);
+  //     const jsonRes = await request.json();
 
-      if (jsonRes && jsonRes.length > 0 && jsonRes[0].project) {
-        setProject(jsonRes);
-      } else {
-        console.log('projectItem[0] or project is undefined');
-      }
-    };
-    getProjectDetails();
-  }, []);
+  //     if (jsonRes && jsonRes.length > 0 && jsonRes[0].project) {
+  //       setProject(jsonRes);
+  //     } else {
+  //       console.log('projectItem[0] or project is undefined');
+  //     }
+  //   };
+  //   getProjectDetails();
+  // }, []);
 
   // Handle drag stop event
   const handleDragStop = (e: any, data: any) => {
@@ -64,32 +71,34 @@ const ProjectView = () => {
       </ul>
 
       <div>
-        {projectItem.length > 0 && (
-          <Draggable
-            nodeRef={nodeRef}
-            axis="x"
-            bounds={{
-              left: 0,
-              right: (8 - cardSpan) * ((window.innerWidth * 0.72) / 7), // Adjust bounds for 75% width
+        {/* {projectItem.length > 0 && ( */}
+        <Draggable
+          nodeRef={nodeRef}
+          axis="x"
+          bounds={{
+            left: 0,
+            right: (8 - cardSpan) * ((window.innerWidth * 0.72) / 7), // Adjust bounds for 75% width
+          }}
+          grid={[(window.innerWidth * 0.72) / 7, (window.innerWidth * 0.72) / 7]} // Snap to column widths based on 75% width
+          position={{ x: (currentColumn - 2) * ((window.innerWidth * 0.72) / 7), y: 0 }}
+          onStop={handleDragStop}
+        >
+          {/* Draggable project card */}
+          <div
+            ref={nodeRef}
+            className="project-card-con"
+            style={{
+              position: 'absolute',
+              width: `${cardSpan * 13.8}%`,
             }}
-            grid={[(window.innerWidth * 0.72) / 7, (window.innerWidth * 0.72) / 7]} // Snap to column widths based on 75% width
-            position={{ x: (currentColumn - 2) * ((window.innerWidth * 0.72) / 7), y: 0 }}
-            onStop={handleDragStop}
+            // Stop dragging if the mouse leaves the element
           >
-            {/* Draggable project card */}
-            <div
-              ref={nodeRef}
-              className="project-card-con"
-              style={{
-                position: 'absolute',
-                width: `${cardSpan * 13.8}%`,
-              }}
-              // Stop dragging if the mouse leaves the element
-            >
-              {projectItem.length > 0 && <ProjectCard single={projectItem[0].project} />}
-            </div>
-          </Draggable>
-        )}
+            {/* {projectItem.length > 0 &&  */}
+            <ProjectCard single={projectItem} />
+            {/* } */}
+          </div>
+        </Draggable>
+        {/* )} */}
       </div>
 
       {/* Display the current column */}

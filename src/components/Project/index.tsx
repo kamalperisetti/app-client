@@ -5,52 +5,54 @@ import { GoHeartFill } from 'react-icons/go';
 import { ImCross } from 'react-icons/im';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { v4 as uuidv4 } from 'uuid';
 import logo from '../../assets/texgo0cy.png';
 import ProjectView from '../ProjectView';
-import { ResourceCard } from '../Types/types';
+import { projectType, ResourceCard } from '../Types/types';
 import './index.css';
 
 interface ProjectProps {
   resourceCard: ResourceCard[];
   projectId: string | undefined;
-  updateResourceCards(resourceCard: ResourceCard[]): void;
+  // updateResourceCards(resourceCard: ResourceCard[]): void;
+  project: projectType;
+  projectStartTime: number;
 }
 
 const Project = (props: ProjectProps) => {
-  let months = [];
-  for (let i = 2; i <= 8; i++) {
-    months.push(i);
-  }
-  const gameId = '1';
+  let months = [2, 3, 4, 5, 6, 7, 8];
+  // const gameId = '1';
 
-  let { resourceCard, projectId, updateResourceCards } = props;
+  let { resourceCard, projectId, project, projectStartTime } = props;
   const [resourceIndex, setResourceIndex] = useState<number>();
   const [resourceSkill, setResourceSkill] = useState<string>();
   const [isRequested, setIsRequested] = useState<boolean>(false);
   const [showResourceCard, setShowResourceCard] = useState<boolean>(false);
+  const [requestId, setRequestId] = useState<string>('');
+  console.log(projectStartTime, 'III');
+  // console.log(project);
+  // const sendResourceCardToRM = async (card: ResourceCard) => {
+  //   const url = `http://localhost:8080/game/game-id/request/${gameId}/return`;
+  //   const option = {
+  //     method: 'POST',
 
-  const sendResourceCardToRM = async (card: ResourceCard) => {
-    const url = `http://localhost:8080/game/game-id/request/${gameId}/return`;
-    const option = {
-      method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
 
-      headers: {
-        'Content-Type': 'application/json',
-      },
+  //     body: JSON.stringify({ ...card, projectId: projectId }),
+  //   };
 
-      body: JSON.stringify({ ...card, projectId: projectId }),
-    };
-
-    resourceCard = resourceCard.filter((each) => card.id !== each.id);
-    updateResourceCards(resourceCard);
-    try {
-      const cardSending = await fetch(url, option);
-      const data = await cardSending.text();
-      toast(data);
-    } catch (e: any) {
-      console.log(e.message);
-    }
-  };
+  //   resourceCard = resourceCard.filter((each) => card.id !== each.id);
+  //   // updateResourceCards(resourceCard);
+  //   try {
+  //     const cardSending = await fetch(url, option);
+  //     const data = await cardSending.text();
+  //     toast(data);
+  //   } catch (e: any) {
+  //     console.log(e.message);
+  //   }
+  // };
 
   const showRequestBtn = (e: React.MouseEvent<HTMLDivElement>, index: number, skill: string) => {
     e.preventDefault();
@@ -66,8 +68,9 @@ const Project = (props: ProjectProps) => {
   };
 
   const sendRequestToRM = (index: number, skill: string) => {
+    const id = uuidv4();
     const resourceCard = {
-      id: `${skill}-${index}`,
+      id: id,
       targetProjectBoardId: projectId,
       demand: {
         time: index,
@@ -76,11 +79,12 @@ const Project = (props: ProjectProps) => {
     };
     setShowResourceCard(true);
     setIsRequested(false);
+    setRequestId(id);
     console.log(resourceCard, 'HII BAYYA');
   };
-  const cancelTheRequest = (index: number, skill: string) => {
-    const id = `${skill}-${index}`;
-    console.log(id);
+
+  const cancelTheRequest = () => {
+    console.log(requestId, 'Canceled');
     setShowResourceCard(false);
   };
 
@@ -111,7 +115,7 @@ const Project = (props: ProjectProps) => {
                 <h2 className="month-details">{index + 2}</h2>
                 <Icon className="request-month-and-skill-heart" />
               </div>
-              <div onClick={() => cancelTheRequest(index, skill)} className="cross-icon-container">
+              <div onClick={cancelTheRequest} className="cross-icon-container">
                 <ImCross className="cross-icon" />
               </div>
             </div>
@@ -165,7 +169,7 @@ const Project = (props: ProjectProps) => {
                 <h2 className="month-details">{index + 2}</h2>
                 <Icon className="request-month-and-skill-heart" />
               </div>
-              <div onClick={() => cancelTheRequest(index, skill)} className="cross-icon-container">
+              <div onClick={cancelTheRequest} className="cross-icon-container">
                 <ImCross className="cross-icon" />
               </div>
             </div>
@@ -181,7 +185,7 @@ const Project = (props: ProjectProps) => {
         <h3 className="plan-title">Project Plan</h3>
         <img className="logo-image" src={logo} alt="company-logo" />
       </div>
-      <ProjectView />
+      <ProjectView project={project} projectStartTime={projectStartTime} />
       <div>
         {resourceCard !== undefined && (
           <div className="resource-card-main-container">

@@ -55,7 +55,7 @@
 .cards-container {
   position: relative;
   width: 14%;
-  display: none;
+  /* display: none; */
 }
 .resource-card-container {
   display: flex;

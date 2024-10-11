@@ -1,6 +1,7 @@
-/* .months-con {
-  width: 80%;
+.months-con {
+  width: 95%;
   position: relative;
+  padding: 0 20px;
 }
 
 .months {
@@ -47,4 +48,4 @@
 
 .projectCard {
   width: 80;
-} */
+}

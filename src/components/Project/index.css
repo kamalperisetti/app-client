@@ -1,7 +1,8 @@
 .project-display {
   background-color: #ffffff;
-  height: 70%;
+  height: 80vh;
   width: 80%;
+  margin-bottom: 30px;
 }
 .time-container {
   display: flex;
@@ -9,7 +10,6 @@
   align-items: center;
   margin-top: 0px;
   padding: 0px 20px 0px 20px;
-  /* tooo */
   height: 6%;
 }
 .logo-image {
@@ -25,10 +25,11 @@
 .resource-card-main-container {
   display: flex;
   padding: 0 20px 0 20px;
-  height: 45vh;
+  height: 50vh;
+  margin-top: 5px;
 }
 .cards {
-  height: 120px;
+  height: 150px;
   border: 1px solid black;
   width: 98%;
   display: flex;
@@ -45,15 +46,15 @@
 }
 .card2 {
   position: absolute;
-  top: 110px;
+  top: 120px;
 }
 .card3 {
   position: absolute;
-  top: 220px;
+  top: 230px;
 }
 .cards-container {
   position: relative;
-  width: 80%;
+  width: 14%;
 }
 .resource-card-container {
   display: flex;

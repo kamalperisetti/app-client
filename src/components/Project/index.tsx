@@ -6,6 +6,7 @@ import { ImCross } from 'react-icons/im';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import logo from '../../assets/texgo0cy.png';
+import ProjectView from '../ProjectView';
 import { ResourceCard } from '../Types/types';
 import './index.css';
 
@@ -180,7 +181,7 @@ const Project = (props: ProjectProps) => {
         <h3 className="plan-title">Project Plan</h3>
         <img className="logo-image" src={logo} alt="company-logo" />
       </div>
-      {/* <ProjectView /> */}
+      <ProjectView />
       <div>
         {resourceCard !== undefined && (
           <div className="resource-card-main-container">

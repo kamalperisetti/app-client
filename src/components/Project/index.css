@@ -81,21 +81,36 @@
   width: 60%;
   text-align: center;
   flex-grow: 1;
+  background-color: #ffffff;
 }
 .skill-holder-name {
   padding: 0 0 0 3px;
   margin: 0px 0px;
 }
+.requested {
+  color: darkorange;
+}
 .name-and-heart {
-  color: red;
   margin-top: 0px;
   font-size: 20px;
 }
 .month-and-skill-container {
-  background-color: red;
   height: 46px;
   width: 30px;
   padding: 0 0 0 8px;
+}
+.red-color {
+  color: red;
+}
+.black-color {
+  color: black;
+}
+
+.red-color-backgound {
+  background-color: red;
+}
+.black-color-backgound {
+  background-color: black;
 }
 .month-details {
   margin: 0 0 0 5px;
@@ -122,7 +137,7 @@
   width: 60%;
 }
 .request-name-and-heart {
-  color: black;
+  color: darkorange;
   font-size: 20px;
   margin-bottom: 5px;
 }
@@ -131,7 +146,7 @@
   color: #ffffff;
 }
 .request-month-and-skill-container {
-  background-color: black;
+  background-color: darkorange;
   height: 46px;
   width: 35px;
   padding: 0 0 0 5px;
@@ -162,7 +177,7 @@
   margin: 15px 0 0 15px;
   transition: transform 0.2s ease-in-out;
   position: absolute;
-  top: 45px;
+  top: 48px;
   z-index: 5;
 }
 
@@ -175,4 +190,5 @@
 .cross-icon {
   font-size: 10px;
   margin-top: 15px;
+  color: chocolate;
 }

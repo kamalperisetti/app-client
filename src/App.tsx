@@ -6,6 +6,7 @@ import { ProjectPlane } from './components/Types/types';
 function App() {
   const [allProjects, setAllProject] = useState<ProjectPlane[]>([]);
   const [errMsg, setErrMsg] = useState<string | null>(null);
+  // const [resourceCard, setResourceCard] = useState<ResourceCard[]>([]);
   const playerId: string = 'bharath1';
   const gameId: string = 'GameId1';
 

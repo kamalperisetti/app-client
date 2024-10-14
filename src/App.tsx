@@ -42,7 +42,7 @@ function App() {
         <>
           {allProjects.length > 0 && (
             <div className="main-container">
-              {allProjects[0].owner.role.startsWith('PM') && (
+              {allProjects[0].owner.role.startsWith('RM') && (
                 <div className="project-display-main-container">
                   {allProjects.map((each: ProjectPlane) => (
                     <Project key={each.id} resourceCard={each.cards} projectId={each.id} project={each.project} projectStartTime={each.projectStartTime} />

@@ -25,11 +25,11 @@
 .resource-card-main-container {
   display: flex;
   padding: 0 20px 0 20px;
-  height: 50vh;
+  height: 60vh;
   margin-top: 5px;
 }
 .cards {
-  height: 150px;
+  height: 170px;
   border: 1px solid black;
   width: 98%;
   display: flex;
@@ -46,15 +46,15 @@
 }
 .card2 {
   position: absolute;
-  top: 120px;
+  top: 140px;
 }
 .card3 {
   position: absolute;
-  top: 230px;
+  top: 280px;
 }
 .cards-container {
   position: relative;
-  width: 14%;
+  width: 15%;
   /* display: none; */
 }
 .resource-card-container {

@@ -29,9 +29,12 @@ const Project = (props: ProjectProps) => {
   const [isRequested, setIsRequested] = useState<boolean>(false);
   const [showResourceCard, setShowResourceCard] = useState<boolean>(false);
   const [requestId, setRequestId] = useState<string>('');
+  // const [gResourceCard, setResourceCard] = useState<ResourceCard[]>(resourceCard);
+  // console.log(gResourceCard, 'GGGG');
   // console.log(projectStartTime, 'III');
   // console.log(project);
   // const sendResourceCardToRM = async (card: ResourceCard) => {
+
   //   const url = `http://localhost:8080/game/game-id/request/${gameId}/return`;
   //   const option = {
   //     method: 'POST',
@@ -54,6 +57,8 @@ const Project = (props: ProjectProps) => {
   //   }
   // };
 
+  const playerId: string = 'bharath1';
+  const gameId: string = 'GameId1';
   const showRequestBtn = (e: React.MouseEvent<HTMLDivElement>, index: number, skill: string) => {
     e.preventDefault();
     if (isRequested || showResourceCard) {
@@ -82,9 +87,17 @@ const Project = (props: ProjectProps) => {
     setRequestId(id);
     console.log(resourceCard, 'HII BAYYA');
   };
+  const id = '1';
 
-  const cancelTheRequest = () => {
-    console.log(requestId, 'Canceled');
+  const cancelTheRequest = async () => {
+    const url = `http://localhost:8080/game/${gameId}/request/${id}/return`;
+    const option = {
+      method: 'GET',
+    };
+    // console.log(requestId, 'Canceled');
+    const response = await fetch(url, option);
+    toast(await response.text());
+
     setShowResourceCard(false);
   };
 
@@ -108,7 +121,7 @@ const Project = (props: ProjectProps) => {
           {showResourceCard === true && resourceIndex === index && resourceSkill === skill && (
             <div className="request-resource-card-container">
               <div className="request-name-and-heart-container">
-                <h3 className="skill-holder-name">?</h3>
+                <h3 className="requested skill-holder-name ">?</h3>
                 <Icon className="request-name-and-heart" />
               </div>
               <div className="request-month-and-skill-container">
@@ -131,15 +144,20 @@ const Project = (props: ProjectProps) => {
                 zIndex: cardIndex + 1,
               }}
             >
-              <div className="name-and-heart-container">
+              <div className={`${skill === `HEART` || skill === `DIAMOND` ? `name-and-heart-container ` : `name-and-heart-container `}`}>
                 <h5 className="skill-holder-name">{card.name}</h5>
                 <span>
-                  <Icon className="name-and-heart" />
+                  <Icon className={`${skill === `HEART` || skill === `DIAMOND` ? `red-color name-and-heart ` : `black-color name-and-heart `}`} />
                 </span>
               </div>
-              <div className="month-and-skill-container">
+              <div
+                className={`${skill === `HEART` || skill === `DIAMOND` ? `month-and-skill-container red-color-backgound` : `month-and-skill-container black-color-backgound`}`}
+              >
                 <h2 className="month-details">{card.time + 2}</h2>
-                <Icon className="month-and-skill-heart" />
+                <Icon
+                  className={`${skill === `HEART` || skill === `DIAMOND` ? `red-color month-and-skill-heart ` : `black-color month-and-skill-heart `}`}
+                  //  className="month-and-skill-heart"
+                />
               </div>
             </div>
           ))}
@@ -162,7 +180,7 @@ const Project = (props: ProjectProps) => {
           {showResourceCard === true && resourceIndex === index && resourceSkill === skill && (
             <div className="request-resource-card-container">
               <div className="request-name-and-heart-container">
-                <h3 className="skill-holder-name">?</h3>
+                <h3 className="skill-holder-name requested">?</h3>
                 <Icon className="request-name-and-heart" />
               </div>
               <div className="request-month-and-skill-container">

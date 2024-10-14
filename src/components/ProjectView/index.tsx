@@ -83,8 +83,8 @@ const ProjectView = (props: ProposType) => {
             left: 0,
             right: (8 - cardSpan) * ((window.innerWidth * 0.72) / 7), // Adjust bounds for 75% width
           }}
-          grid={[(window.innerWidth * 0.72) / 7, (window.innerWidth * 0.72) / 7]} // Snap to column widths based on 75% width
-          position={{ x: (currentColumn - 2) * ((window.innerWidth * 0.72) / 7), y: 0 }}
+          grid={[(window.innerWidth * 0.78) / 7, (window.innerWidth * 0.78) / 7]} // Snap to column widths based on 75% width
+          position={{ x: (currentColumn - 2) * ((window.innerWidth * 0.78) / 7), y: 0 }}
           onStop={handleDragStop}
         >
           {/* Draggable project card */}

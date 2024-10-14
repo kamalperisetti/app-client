@@ -6,6 +6,7 @@ import { ProjectPlane } from './components/Types/types';
 function App() {
   const [allProjects, setAllProject] = useState<ProjectPlane[]>([]);
   const [errMsg, setErrMsg] = useState<string | null>(null);
+  // const [resourceCard, setResourceCard] = useState<ResourceCard[]>([]);
   const playerId: string = 'bharath1';
   const gameId: string = 'GameId1';
 
@@ -42,7 +43,7 @@ function App() {
         <>
           {allProjects.length > 0 && (
             <div className="main-container">
-              {allProjects[0].owner.role.startsWith('PM') && (
+              {allProjects[0].owner.role.startsWith('RM') && (
                 <div className="project-display-main-container">
                   {allProjects.map((each: ProjectPlane) => (
                     <Project key={each.id} resourceCard={each.cards} projectId={each.id} project={each.project} projectStartTime={each.projectStartTime} />

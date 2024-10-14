@@ -89,7 +89,7 @@ const Project = (props: ProjectProps) => {
   };
 
   const renderCards = (skill: 'HEART' | 'DIAMOND' | 'SPADE', index: number) => {
-    const cards = resourceCard.filter((c) => c.time === index && c.skill === skill);
+    const cards = resourceCard.filter((c) => c.time - 2 === index && c.skill === skill);
     const Icon = skill === 'HEART' ? GoHeartFill : skill === 'DIAMOND' ? FaDiamond : BsFillSuitSpadeFill;
 
     if (cards.length > 0) {

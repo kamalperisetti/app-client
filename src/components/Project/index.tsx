@@ -29,7 +29,7 @@ const Project = (props: ProjectProps) => {
   const [isRequested, setIsRequested] = useState<boolean>(false);
   const [showResourceCard, setShowResourceCard] = useState<boolean>(false);
   const [requestId, setRequestId] = useState<string>('');
-  console.log(projectStartTime, 'III');
+  // console.log(projectStartTime, 'III');
   // console.log(project);
   // const sendResourceCardToRM = async (card: ResourceCard) => {
   //   const url = `http://localhost:8080/game/game-id/request/${gameId}/return`;

@@ -18,7 +18,7 @@ const ProjectView = (props: ProposType) => {
   const { project, projectStartTime } = props;
   const [projectItem, setProject] = useState<projectType>(project);
   const [currentColumn, setCurrentColumn] = useState(project.initialStartTime); // Initialize column to 2
-  console.log(projectStartTime, 'PP');
+  // console.log(projectStartTime, 'PP');
   const cardSpan = 3;
   // const cardSpan = 4; // Card spans 3
   const nodeRef = useRef(null); // Ref for draggable card

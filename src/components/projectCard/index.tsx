@@ -7,6 +7,7 @@ import { projectType } from '../Types/types';
 import './index.css';
 type projectPropsType = {
   single: projectType;
+  projectStartEndTime: { start: number; end: number };
 };
 interface FrequencyCounter {
   [key: string]: number; // The key is the string, and the value is the frequency
@@ -30,9 +31,8 @@ const changeDataFormate = (data: projectType) => {
 };
 
 const ProjectCard = (props: projectPropsType) => {
-  const { single } = props;
+  const { single, projectStartEndTime } = props;
 
-  let diff = single.initialFinishTime - single.initialStartTime;
   // max width as percantage
 
   const dataFormat = useMemo(() => {
@@ -49,8 +49,8 @@ const ProjectCard = (props: projectPropsType) => {
         <h2 style={{ fontSize: `12px`, fontFamily: 'sans-serif' }}>{single.name}</h2>
         <div className="time-container-card">
           <FaRegClock style={{ fontSize: `${dataFormatLength * 5}px` }} />
-          <p style={{ fontSize: `${dataFormatLength * 5}px` }}>
-            {single.initialStartTime}- {single.initialFinishTime}
+          <p style={{ fontSize: `${dataFormatLength * 4.5}px` }}>
+            {projectStartEndTime.start}- {projectStartEndTime.end}
           </p>
         </div>
       </nav>

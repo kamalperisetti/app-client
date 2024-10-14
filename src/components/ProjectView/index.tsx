@@ -17,9 +17,11 @@ interface ProposType {
 const ProjectView = (props: ProposType) => {
   const { project, projectStartTime } = props;
   const [projectItem, setProject] = useState<projectType>(project);
-  const [currentColumn, setCurrentColumn] = useState(project.initialStartTime); // Initialize column to 2
-  console.log(projectStartTime, 'PP');
-  const cardSpan = 3;
+  const [projectStartEndTime, setProjectStartEndTime] = useState({ start: project.initialStartTime, end: project.initialFinishTime });
+  const [currentColumn, setCurrentColumn] = useState(projectStartTime); // Initialize column to 2
+
+  const cardSpan = parseInt(localStorage.getItem('projectLength') || '0');
+
   // const cardSpan = 4; // Card spans 3
   const nodeRef = useRef(null); // Ref for draggable card
 
@@ -46,6 +48,8 @@ const ProjectView = (props: ProposType) => {
     // Ensure card stays within columns 2 to 8
     if (newColumn >= 2 && newColumn <= 8 && newColumn + cardSpan - 1 <= 8) {
       setCurrentColumn(newColumn);
+      let diff = project.initialFinishTime - project.initialStartTime;
+      setProjectStartEndTime({ start: newColumn, end: newColumn + diff });
     }
   };
 
@@ -94,7 +98,7 @@ const ProjectView = (props: ProposType) => {
             // Stop dragging if the mouse leaves the element
           >
             {/* {projectItem.length > 0 &&  */}
-            <ProjectCard single={projectItem} />
+            <ProjectCard single={projectItem} projectStartEndTime={projectStartEndTime} />
             {/* } */}
           </div>
         </Draggable>
@@ -102,7 +106,7 @@ const ProjectView = (props: ProposType) => {
       </div>
 
       {/* Display the current column */}
-      <div style={{ marginTop: '20px', textAlign: 'center' }}>Current Column: {currentColumn}</div>
+      {/* <div style={{ marginTop: '20px', textAlign: 'center' }}>Current Column: {currentColumn}</div> */}
     </div>
   );
 };

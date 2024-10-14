@@ -4,3 +4,10 @@
   min-height: 100vh;
   padding: 30px;
 }
+.prorject-display-main-container {
+  width: 85%;
+}
+.main-container {
+  display: flex;
+  gap: 10px;
+}

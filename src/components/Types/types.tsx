@@ -20,7 +20,7 @@ export type projectType = {
   projectStartTime: number;
 };
 
-type Owner = {
+export type Owner = {
   id: string;
   name: string;
   role: string;

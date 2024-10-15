@@ -1,14 +1,16 @@
-import { useState } from 'react';
+import { Client } from '@stomp/stompjs';
+import { useEffect, useState } from 'react';
 import { BsFillSuitSpadeFill } from 'react-icons/bs';
 import { FaDiamond } from 'react-icons/fa6';
 import { GoHeartFill } from 'react-icons/go';
 import { ImCross } from 'react-icons/im';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import SockJS from 'sockjs-client';
 import { v4 as uuidv4 } from 'uuid';
 import logo from '../../assets/texgo0cy.png';
 import ProjectView from '../ProjectView';
-import { projectType, ResourceCard } from '../Types/types';
+import { Owner, projectType, ResourceCard } from '../Types/types';
 import './index.css';
 
 interface ProjectProps {
@@ -17,46 +19,24 @@ interface ProjectProps {
   // updateResourceCards(resourceCard: ResourceCard[]): void;
   project: projectType;
   projectStartTime: number;
+  owner: Owner;
 }
 
 const Project = (props: ProjectProps) => {
   let months = [2, 3, 4, 5, 6, 7, 8];
   // const gameId = '1';
 
-  let { resourceCard, projectId, project, projectStartTime } = props;
+  let { resourceCard, projectId, project, projectStartTime, owner } = props;
   const [resourceIndex, setResourceIndex] = useState<number>();
   const [resourceSkill, setResourceSkill] = useState<string>();
   const [isRequested, setIsRequested] = useState<boolean>(false);
+  const [requestResponse, setRequestResponse] = useState('');
   const [showResourceCard, setShowResourceCard] = useState<boolean>(false);
   const [requestId, setRequestId] = useState<string>('');
-  // const [gResourceCard, setResourceCard] = useState<ResourceCard[]>(resourceCard);
-  // console.log(gResourceCard, 'GGGG');
-  // console.log(projectStartTime, 'III');
-  // console.log(project);
-  // const sendResourceCardToRM = async (card: ResourceCard) => {
 
-  //   const url = `http://localhost:8080/game/game-id/request/${gameId}/return`;
-  //   const option = {
-  //     method: 'POST',
-
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-
-  //     body: JSON.stringify({ ...card, projectId: projectId }),
-  //   };
-
-  //   resourceCard = resourceCard.filter((each) => card.id !== each.id);
-  //   // updateResourceCards(resourceCard);
-  //   try {
-  //     const cardSending = await fetch(url, option);
-  //     const data = await cardSending.text();
-  //     toast(data);
-  //   } catch (e: any) {
-  //     console.log(e.message);
-  //   }
-  // };
-
+  useEffect(() => {
+    console.log('request triggered');
+  }, [requestResponse]);
   const playerId: string = 'bharath1';
   const gameId: string = 'GameId1';
   const showRequestBtn = (e: React.MouseEvent<HTMLDivElement>, index: number, skill: string) => {
@@ -77,20 +57,38 @@ const Project = (props: ProjectProps) => {
     const resourceCard = {
       id: id,
       targetProjectBoardId: projectId,
+      projectPlanId: project.id,
+      playerId: 'bharath3',
       demand: {
-        time: index,
+        time: index + 2,
         skill: skill,
       },
     };
+    const socket = new SockJS('http://localhost:8080/rmg');
+    const stompClient = new Client({
+      webSocketFactory: () => socket,
+      onConnect: () => {
+        console.log('Connected to web Socket');
+        stompClient.subscribe('/topic/request', (message) => {
+          setRequestResponse(message.body);
+          console.log(message.body);
+        });
+        stompClient.publish({ destination: '/app/game/GameId1/request', body: JSON.stringify(resourceCard) });
+      },
+
+      onStompError: (frame) => {
+        console.error('Broker Error: ' + frame.headers['message']);
+      },
+    });
+    stompClient.activate();
+
     setShowResourceCard(true);
     setIsRequested(false);
     setRequestId(id);
-    console.log(resourceCard, 'HII BAYYA');
   };
-  const id = '1';
 
   const cancelTheRequest = async () => {
-    const url = `http://localhost:8080/game/${gameId}/request/${id}/return`;
+    const url = `http://localhost:8080/game/${gameId}/request/${requestId}/return`;
     const option = {
       method: 'GET',
     };

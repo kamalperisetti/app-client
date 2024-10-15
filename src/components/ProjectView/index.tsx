@@ -25,21 +25,6 @@ const ProjectView = (props: ProposType) => {
   // const cardSpan = 4; // Card spans 3
   const nodeRef = useRef(null); // Ref for draggable card
 
-  // useEffect(() => {
-  //   const getProjectDetails = async () => {
-  //     const url = 'http://localhost:8080/games/game1/projectPlans?ownerId=bharath1';
-  //     const request = await fetch(url);
-  //     const jsonRes = await request.json();
-
-  //     if (jsonRes && jsonRes.length > 0 && jsonRes[0].project) {
-  //       setProject(jsonRes);
-  //     } else {
-  //       console.log('projectItem[0] or project is undefined');
-  //     }
-  //   };
-  //   getProjectDetails();
-  // }, []);
-
   // Handle drag stop event
   const handleDragStop = (e: any, data: any) => {
     // Calculate the new column based on drag position
@@ -75,7 +60,6 @@ const ProjectView = (props: ProposType) => {
       </ul>
 
       <div>
-        {/* {projectItem.length > 0 && ( */}
         <Draggable
           nodeRef={nodeRef}
           axis="x"
@@ -87,7 +71,6 @@ const ProjectView = (props: ProposType) => {
           position={{ x: (currentColumn - 2) * ((window.innerWidth * 0.78) / 7), y: 0 }}
           onStop={handleDragStop}
         >
-          {/* Draggable project card */}
           <div
             ref={nodeRef}
             className="project-card-con"
@@ -97,16 +80,10 @@ const ProjectView = (props: ProposType) => {
             }}
             // Stop dragging if the mouse leaves the element
           >
-            {/* {projectItem.length > 0 &&  */}
             <ProjectCard single={projectItem} projectStartEndTime={projectStartEndTime} />
-            {/* } */}
           </div>
         </Draggable>
-        {/* )} */}
       </div>
-
-      {/* Display the current column */}
-      {/* <div style={{ marginTop: '20px', textAlign: 'center' }}>Current Column: {currentColumn}</div> */}
     </div>
   );
 };

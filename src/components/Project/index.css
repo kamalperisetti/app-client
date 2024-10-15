@@ -157,11 +157,13 @@
   border-radius: 3px;
   padding: 8px;
   color: rgb(99, 99, 99);
+  cursor: pointer;
 }
 .cancel-request-btn {
   background-color: rgb(246, 58, 58);
   font-size: '8px';
   margin-left: '3px';
+  cursor: pointer;
 }
 .request-resource-card-container {
   display: flex;
@@ -186,6 +188,7 @@
   height: 40px;
   padding: 3px;
   background-color: #ffffff;
+  cursor: pointer;
 }
 .cross-icon {
   font-size: 10px;

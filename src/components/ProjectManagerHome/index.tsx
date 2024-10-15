@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
-
 import { useParams, useSearchParams } from 'react-router-dom';
 import Project from '../Project';
 import { ProjectPlane } from '../Types/types';
+import './index.css';
 
 const ProjectManagerHome = () => {
   const [allProjects, setAllProject] = useState<ProjectPlane[]>([]); // To store all projects
   const [errMsg, setErrMsg] = useState<string | null>(null);
-
+  // console.log(allProjects, 'JIII');
   const [searchParams] = useSearchParams();
   const playerId: string | null = searchParams.get('playerId');
 

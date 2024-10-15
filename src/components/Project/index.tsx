@@ -4,7 +4,8 @@ import { BsFillSuitSpadeFill } from 'react-icons/bs';
 import { FaDiamond } from 'react-icons/fa6';
 import { GoHeartFill } from 'react-icons/go';
 import { ImCross } from 'react-icons/im';
-import { toast, ToastContainer } from 'react-toastify';
+import { useParams } from 'react-router-dom';
+// import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import SockJS from 'sockjs-client';
 import { v4 as uuidv4 } from 'uuid';
@@ -16,7 +17,6 @@ import './index.css';
 interface ProjectProps {
   resourceCard: ResourceCard[];
   projectId: string | undefined;
-  // updateResourceCards(resourceCard: ResourceCard[]): void;
   project: projectType;
   projectStartTime: number;
   owner: Owner;
@@ -24,7 +24,6 @@ interface ProjectProps {
 
 const Project = (props: ProjectProps) => {
   let months = [2, 3, 4, 5, 6, 7, 8];
-  // const gameId = '1';
 
   let { resourceCard, projectId, project, projectStartTime, owner } = props;
   const [resourceIndex, setResourceIndex] = useState<number>();
@@ -33,26 +32,23 @@ const Project = (props: ProjectProps) => {
   const [requestResponse, setRequestResponse] = useState('');
   const [showResourceCard, setShowResourceCard] = useState<boolean>(false);
   const [requestId, setRequestId] = useState<string>('');
-
+  const { gameId } = useParams();
   useEffect(() => {
     console.log('request triggered');
   }, [requestResponse]);
-  const playerId: string = 'bharath1';
-  const gameId: string = 'GameId1';
+
   const showRequestBtn = (e: React.MouseEvent<HTMLDivElement>, index: number, skill: string) => {
     e.preventDefault();
     if (isRequested || showResourceCard) {
-      toast('You Can Make One Request At a Time Wait Until It Resolve Or Cancel Your Request');
       return;
     }
-
     setIsRequested(true);
-
     setResourceIndex(index);
     setResourceSkill(skill);
   };
 
   const sendRequestToRM = (index: number, skill: string) => {
+    // toast.dismiss();
     const id = uuidv4();
     const resourceCard = {
       id: id,
@@ -88,27 +84,28 @@ const Project = (props: ProjectProps) => {
   };
 
   const cancelTheRequest = async () => {
+    setShowResourceCard(false);
     const url = `http://localhost:8080/game/${gameId}/request/${requestId}/return`;
     const option = {
       method: 'GET',
     };
-    // console.log(requestId, 'Canceled');
     const response = await fetch(url, option);
-    toast(await response.text());
-
-    setShowResourceCard(false);
+    // if (response.status === 404) {
+    //   toast.dismiss();
+    // }
+    // console.log(await response.text());
   };
 
-  const renderCards = (skill: 'HEART' | 'DIAMOND' | 'SPADE', index: number) => {
-    const cards = resourceCard.filter((c) => c.time - 2 === index && c.skill === skill);
+  const renderCards = (skill: 'HEART' | 'DIAMOND' | 'SPADE', month: number) => {
+    const cards = resourceCard.filter((c) => c.time === month && c.skill === skill);
     const Icon = skill === 'HEART' ? GoHeartFill : skill === 'DIAMOND' ? FaDiamond : BsFillSuitSpadeFill;
 
     if (cards.length > 0) {
       return (
-        <div className={`cards card${skill === 'HEART' ? '1' : skill === 'DIAMOND' ? '2' : '3'}`} onContextMenu={(e) => showRequestBtn(e, index, skill)}>
-          {isRequested === true && resourceIndex === index && resourceSkill === skill && (
+        <div className={`cards card${skill === 'HEART' ? '1' : skill === 'DIAMOND' ? '2' : '3'}`} onContextMenu={(e) => showRequestBtn(e, month, skill)}>
+          {isRequested === true && resourceIndex === month && resourceSkill === skill && (
             <div className="request-btn-container">
-              <button className="request-btn" onClick={() => sendRequestToRM(index, skill)}>
+              <button className="request-btn" onClick={() => sendRequestToRM(month, skill)}>
                 Request
               </button>
               <button className="cancel-request-btn request-btn">
@@ -116,14 +113,14 @@ const Project = (props: ProjectProps) => {
               </button>
             </div>
           )}
-          {showResourceCard === true && resourceIndex === index && resourceSkill === skill && (
+          {showResourceCard === true && resourceIndex === month && resourceSkill === skill && (
             <div className="request-resource-card-container">
               <div className="request-name-and-heart-container">
                 <h3 className="requested skill-holder-name ">?</h3>
                 <Icon className="request-name-and-heart" />
               </div>
               <div className="request-month-and-skill-container">
-                <h2 className="month-details">{index + 2}</h2>
+                <h2 className="month-details">{month}</h2>
                 <Icon className="request-month-and-skill-heart" />
               </div>
               <div onClick={cancelTheRequest} className="cross-icon-container">
@@ -137,13 +134,8 @@ const Project = (props: ProjectProps) => {
               className="resource-card-container"
               style={{
                 position: 'absolute',
-                // top: cards.length === 1 ? '14px' : `${cardIndex * 18}px`,
-                top: cards.length === 1 ? '50px' : cardIndex === 0 ? '3px' : `${cardIndex * 18}px`,
-
-                // top: cardIndex === 0 ? '4px' : `${cardIndex * 18}px`,
+                top: cards.length === 1 ? '50px' : cardIndex === 0 ? '5px' : `${cardIndex * 19}px`,
                 left: cards.length === 1 ? '35px' : cardIndex === 0 ? '10px' : cardIndex >= 3 ? `${(cardIndex - 2.8) * 25}px` : `${cardIndex * 25}px`,
-                // right: cardIndex >= 3 ? `${cardIndex * -20}px` : '20px',
-                zIndex: cardIndex + 1,
               }}
             >
               <div className={`${skill === `HEART` || skill === `DIAMOND` ? `name-and-heart-container ` : `name-and-heart-container `}`}>
@@ -164,11 +156,11 @@ const Project = (props: ProjectProps) => {
       );
     } else {
       return (
-        <div className={`cards card${skill === 'HEART' ? '1' : skill === 'DIAMOND' ? '2' : '3'}`} onContextMenu={(e) => showRequestBtn(e, index, skill)}>
+        <div className={`cards card${skill === 'HEART' ? '1' : skill === 'DIAMOND' ? '2' : '3'}`} onContextMenu={(e) => showRequestBtn(e, month, skill)}>
           <Icon style={{ color: 'rgb(108, 111, 138)', fontSize: '30px' }} />
-          {isRequested === true && resourceIndex === index && resourceSkill === skill && (
+          {isRequested === true && resourceIndex === month && resourceSkill === skill && (
             <div className="request-btn-container">
-              <button className="request-btn" onClick={() => sendRequestToRM(index, skill)}>
+              <button className="request-btn" onClick={() => sendRequestToRM(month, skill)}>
                 Request
               </button>
               <button className="cancel-request-btn request-btn">
@@ -176,14 +168,14 @@ const Project = (props: ProjectProps) => {
               </button>
             </div>
           )}
-          {showResourceCard === true && resourceIndex === index && resourceSkill === skill && (
+          {showResourceCard === true && resourceIndex === month && resourceSkill === skill && (
             <div className="request-resource-card-container">
               <div className="request-name-and-heart-container">
                 <h3 className="skill-holder-name requested">?</h3>
                 <Icon className="request-name-and-heart" />
               </div>
               <div className="request-month-and-skill-container">
-                <h2 className="month-details">{index + 2}</h2>
+                <h2 className="month-details">{month + 2}</h2>
                 <Icon className="request-month-and-skill-heart" />
               </div>
               <div onClick={cancelTheRequest} className="cross-icon-container">
@@ -206,17 +198,16 @@ const Project = (props: ProjectProps) => {
       <div>
         {resourceCard !== undefined && (
           <div className="resource-card-main-container">
-            {months.map((month, index) => (
+            {months.map((month) => (
               <div key={month} className="cards-container">
-                {renderCards('HEART', index)}
-                {renderCards('DIAMOND', index)}
-                {renderCards('SPADE', index)}
+                {renderCards('HEART', month)}
+                {renderCards('DIAMOND', month)}
+                {renderCards('SPADE', month)}
               </div>
             ))}
           </div>
         )}
       </div>
-      <ToastContainer />
     </div>
   );
 };

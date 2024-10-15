@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import Project from '../Project';
-import { ProjectPlane } from '../Types/types';
+import { Owner, ProjectPlane } from '../Types/types';
 import './index.css';
 
 const ProjectManagerHome = () => {
   const [allProjects, setAllProject] = useState<ProjectPlane[]>([]); // To store all projects
   const [errMsg, setErrMsg] = useState<string | null>(null);
   // console.log(allProjects, 'JIII');
+  const [player, setPlayer] = useState<Owner>();
   const [searchParams] = useSearchParams();
-  const playerId: string | null = searchParams.get('playerId');
+  const playerId: string | null = searchParams.get('ownerId');
 
   const { gameId } = useParams();
 
@@ -25,8 +26,24 @@ const ProjectManagerHome = () => {
     }
   };
 
+  const getThePlayerByPlayerId = async (gameId: string, playerId: string) => {
+    const url = `http://localhost:8080/games/${gameId}/players/${playerId}`;
+    const option = {
+      method: 'GET',
+    };
+    const response = await fetch(url, option);
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data[0], 'ANJBSBK');
+      setPlayer(data[0]);
+    } else {
+      setErrMsg(await response.text());
+    }
+  };
+
   useEffect(() => {
-    getTheProjectDataByPlayerId(gameId ?? '', playerId ?? '');
+    getTheProjectDataByPlayerId(gameId ?? '1', playerId ?? '1');
+    getThePlayerByPlayerId(gameId ?? '1', playerId ?? '1');
   }, []);
 
   return (
@@ -45,14 +62,17 @@ const ProjectManagerHome = () => {
                       project={each.project}
                       projectStartTime={each.projectStartTime}
                       owner={each.owner}
+                      setErrMsg={setErrMsg}
                     />
                   ))}
                 </div>
               )}
               <>
-                <h3 className="playerName">
-                  {allProjects[0].owner.name}-{allProjects[0].owner.role}
-                </h3>
+                {player !== undefined && (
+                  <h3 className="playerName">
+                    {player.name}-{player.role}
+                  </h3>
+                )}
               </>
             </div>
           )}

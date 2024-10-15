@@ -4,8 +4,8 @@ import { BsFillSuitSpadeFill } from 'react-icons/bs';
 import { FaDiamond } from 'react-icons/fa6';
 import { GoHeartFill } from 'react-icons/go';
 import { ImCross } from 'react-icons/im';
-import { useParams } from 'react-router-dom';
 // import { toast, ToastContainer } from 'react-toastify';
+import { useParams } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import SockJS from 'sockjs-client';
 import { v4 as uuidv4 } from 'uuid';
@@ -20,12 +20,14 @@ interface ProjectProps {
   project: projectType;
   projectStartTime: number;
   owner: Owner;
+  // setErrMsg: string;
+  setErrMsg: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 const Project = (props: ProjectProps) => {
   let months = [2, 3, 4, 5, 6, 7, 8];
 
-  let { resourceCard, projectId, project, projectStartTime, owner } = props;
+  let { resourceCard, projectId, project, projectStartTime, owner, setErrMsg } = props;
   const [resourceIndex, setResourceIndex] = useState<number>();
   const [resourceSkill, setResourceSkill] = useState<string>();
   const [isRequested, setIsRequested] = useState<boolean>(false);
@@ -33,6 +35,8 @@ const Project = (props: ProjectProps) => {
   const [showResourceCard, setShowResourceCard] = useState<boolean>(false);
   const [requestId, setRequestId] = useState<string>('');
   const { gameId } = useParams();
+  // const gameId = 'sd';
+  // setErrMsg('Game Not Found');
   useEffect(() => {
     console.log('request triggered');
   }, [requestResponse]);
@@ -90,10 +94,10 @@ const Project = (props: ProjectProps) => {
       method: 'GET',
     };
     const response = await fetch(url, option);
-    // if (response.status === 404) {
-    //   toast.dismiss();
-    // }
-    // console.log(await response.text());
+    const err = await response.text();
+    if (err.startsWith('Game')) {
+      setErrMsg(err);
+    }
   };
 
   const renderCards = (skill: 'HEART' | 'DIAMOND' | 'SPADE', month: number) => {

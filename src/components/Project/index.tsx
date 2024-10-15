@@ -137,8 +137,12 @@ const Project = (props: ProjectProps) => {
               className="resource-card-container"
               style={{
                 position: 'absolute',
-                top: cardIndex === 0 ? '8px' : `${cardIndex * 30}px`,
-                left: cardIndex === 0 ? '10px' : `${cardIndex * 25}px`,
+                // top: cards.length === 1 ? '14px' : `${cardIndex * 18}px`,
+                top: cards.length === 1 ? '50px' : cardIndex === 0 ? '3px' : `${cardIndex * 18}px`,
+
+                // top: cardIndex === 0 ? '4px' : `${cardIndex * 18}px`,
+                left: cards.length === 1 ? '35px' : cardIndex === 0 ? '10px' : cardIndex >= 3 ? `${(cardIndex - 2.8) * 25}px` : `${cardIndex * 25}px`,
+                // right: cardIndex >= 3 ? `${cardIndex * -20}px` : '20px',
                 zIndex: cardIndex + 1,
               }}
             >
@@ -152,10 +156,7 @@ const Project = (props: ProjectProps) => {
                 className={`${skill === `HEART` || skill === `DIAMOND` ? `month-and-skill-container red-color-backgound` : `month-and-skill-container black-color-backgound`}`}
               >
                 <h2 className="month-details">{card.time + 2}</h2>
-                <Icon
-                  className={`${skill === `HEART` || skill === `DIAMOND` ? `red-color month-and-skill-heart ` : `black-color month-and-skill-heart `}`}
-                  //  className="month-and-skill-heart"
-                />
+                <Icon className={`${skill === `HEART` || skill === `DIAMOND` ? `red-color month-and-skill-heart ` : `black-color month-and-skill-heart `}`} />
               </div>
             </div>
           ))}

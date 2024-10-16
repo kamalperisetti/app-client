@@ -1,5 +1,6 @@
 import { Client } from '@stomp/stompjs';
 import { useEffect, useState } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
 import { BsFillSuitSpadeFill } from 'react-icons/bs';
 import { FaDiamond } from 'react-icons/fa6';
 import { GoHeartFill } from 'react-icons/go';
@@ -9,14 +10,15 @@ import 'react-toastify/dist/ReactToastify.css';
 import SockJS from 'sockjs-client';
 import { v4 as uuidv4 } from 'uuid';
 import logo from '../../assets/texgo0cy.png';
+// import AppContext from '../../Context/appContext';
 import ProjectView from '../ProjectView';
 import { ProjectPlane } from '../Types/types';
 import './index.css';
 
-const Project = ({ proje, setErrMsg }: { proje: ProjectPlane; setErrMsg: React.Dispatch<React.SetStateAction<string | null>> }) => {
+const Project = ({ eachProject, setErrMsg }: { eachProject: ProjectPlane; setErrMsg: React.Dispatch<React.SetStateAction<string | null>> }) => {
   let months = [2, 3, 4, 5, 6, 7, 8];
 
-  let { cards, id, project, projectStartTime, owner } = proje;
+  let { cards, id, project, projectStartTime, owner } = eachProject;
   // console.log(owner);
 
   const [resourceIndex, setResourceIndex] = useState<number>();
@@ -26,13 +28,57 @@ const Project = ({ proje, setErrMsg }: { proje: ProjectPlane; setErrMsg: React.D
   const [showResourceCard, setShowResourceCard] = useState<boolean>(false);
   const [requestId, setRequestId] = useState<string>('');
   const { gameId } = useParams();
+  // const { allProjects, changeErrorState } = useContext(AppContext);
+  // console.log(allProjects, 'HII MY GOODD BOYS');
   useEffect(() => {
     console.log('request triggered');
   }, [requestResponse]);
 
   const showRequestBtn = (e: React.MouseEvent<HTMLDivElement>, index: number, skill: string) => {
     e.preventDefault();
+    let projectStartMonth = projectStartTime;
+    console.log(projectStartMonth);
+    // changeErrorState('MY BOSSS');
+
+    const diffrence = project.initialFinishTime - projectStartTime;
+    const projectEndTime = projectStartTime + diffrence;
+    let isTrue = false;
+    for (projectStartMonth; projectStartMonth <= projectEndTime; projectStartMonth++) {
+      if (projectStartMonth === index) {
+        isTrue = true;
+      }
+    }
+
+    // console.log(isRequested);
+    // console.log(isTrue, 'checking is true');
+    // console.log(index);
+
     if (isRequested || showResourceCard) {
+      toast.error('You can make one request at a time', {
+        style: {
+          borderRadius: '10px',
+          background: '#333',
+          fontSize: '18px',
+          minWidth: '600px',
+          textAlign: 'center',
+          color: '#fff',
+        },
+        duration: 1500,
+      });
+      return;
+    }
+    if (!isTrue) {
+      toast.error('Please make a request from the project start month to project end month', {
+        style: {
+          borderRadius: '10px',
+          background: '#333',
+          fontSize: '18px',
+          minWidth: '600px',
+          textAlign: 'center',
+          color: '#fff',
+        },
+        duration: 1500,
+      });
       return;
     }
     setIsRequested(true);
@@ -40,7 +86,7 @@ const Project = ({ proje, setErrMsg }: { proje: ProjectPlane; setErrMsg: React.D
     setResourceSkill(skill);
   };
 
-  const sendRequestToRM = (index: number, skill: string) => {
+  const sendRequestToRM = (month: number, skill: string) => {
     const resourceCardId = uuidv4();
     const cards = {
       id: resourceCardId,
@@ -48,10 +94,11 @@ const Project = ({ proje, setErrMsg }: { proje: ProjectPlane; setErrMsg: React.D
       projectPlanId: project.id,
       playerId: 'bharath3',
       demand: {
-        time: index + 2,
+        time: month,
         skill: skill,
       },
     };
+    console.log(cards, 'KII');
     const socket = new SockJS('http://localhost:8080/rmg');
     const stompClient = new Client({
       webSocketFactory: () => socket,
@@ -83,7 +130,29 @@ const Project = ({ proje, setErrMsg }: { proje: ProjectPlane; setErrMsg: React.D
     };
     const response = await fetch(url, option);
     const err = await response.text();
-    console.log(err);
+
+    if (response.ok) {
+      toast.success(err, {
+        style: {
+          borderRadius: '10px',
+          fontSize: '18px',
+          minWidth: '600px',
+          textAlign: 'center',
+          // color: '#fff',
+        },
+        duration: 1500,
+      });
+    } else {
+      toast.error(err, {
+        style: {
+          borderRadius: '10px',
+          fontSize: '18px',
+          minWidth: '600px',
+          textAlign: 'center',
+        },
+        duration: 1500,
+      });
+    }
     if (err.startsWith('Game')) {
       setErrMsg(err);
     }
@@ -126,8 +195,8 @@ const Project = ({ proje, setErrMsg }: { proje: ProjectPlane; setErrMsg: React.D
               className="resource-card-container"
               style={{
                 position: 'absolute',
-                top: cards.length === 1 ? '50px' : cardIndex === 0 ? '5px' : `${cardIndex * 19}px`,
-                left: cards.length === 1 ? '35px' : cardIndex === 0 ? '10px' : cardIndex >= 3 ? `${(cardIndex - 2.8) * 25}px` : `${cardIndex * 25}px`,
+                top: filteredCards.length === 1 ? '50px' : cardIndex === 0 ? '5px' : `${cardIndex * 19}px`,
+                left: filteredCards.length === 1 ? '35px' : cardIndex === 0 ? '10px' : cardIndex >= 3 ? `${(cardIndex - 2.8) * 25}px` : `${cardIndex * 25}px`,
               }}
             >
               <div className={`${skill === `HEART` || skill === `DIAMOND` ? `name-and-heart-container ` : `name-and-heart-container `}`}>
@@ -139,7 +208,7 @@ const Project = ({ proje, setErrMsg }: { proje: ProjectPlane; setErrMsg: React.D
               <div
                 className={`${skill === `HEART` || skill === `DIAMOND` ? `month-and-skill-container red-color-backgound` : `month-and-skill-container black-color-backgound`}`}
               >
-                <h2 className="month-details">{card.time + 2}</h2>
+                <h2 className="month-details">{card.time}</h2>
                 <Icon className={`${skill === `HEART` || skill === `DIAMOND` ? `red-color month-and-skill-heart ` : `black-color month-and-skill-heart `}`} />
               </div>
             </div>
@@ -155,8 +224,8 @@ const Project = ({ proje, setErrMsg }: { proje: ProjectPlane; setErrMsg: React.D
               <button className="request-btn" onClick={() => sendRequestToRM(month, skill)}>
                 Request
               </button>
-              <button className="cancel-request-btn request-btn">
-                <ImCross onClick={() => setIsRequested(false)} style={{ fontSize: '11px' }} />
+              <button onClick={() => setIsRequested(false)} className="cancel-request-btn request-btn">
+                <ImCross style={{ fontSize: '11px' }} />
               </button>
             </div>
           )}
@@ -167,7 +236,7 @@ const Project = ({ proje, setErrMsg }: { proje: ProjectPlane; setErrMsg: React.D
                 <Icon className="request-name-and-heart" />
               </div>
               <div className="request-month-and-skill-container">
-                <h2 className="month-details">{month + 2}</h2>
+                <h2 className="month-details">{month}</h2>
                 <Icon className="request-month-and-skill-heart" />
               </div>
               <div onClick={cancelTheRequest} className="cross-icon-container">
@@ -200,6 +269,7 @@ const Project = ({ proje, setErrMsg }: { proje: ProjectPlane; setErrMsg: React.D
           </div>
         )}
       </div>
+      <Toaster />
     </div>
   );
 };

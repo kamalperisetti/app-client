@@ -69,12 +69,11 @@ const ProjectCard = (props: projectPropsType) => {
                 <p>
                   {each.DIAMOND} x <FaDiamond className="heart-icon" />
                 </p>
-              )}{' '}
+              )}
             </li>
             <li className="empty-con">
               {each.SPADE > 0 && (
                 <p>
-                  {' '}
                   {each.SPADE} x <ImSpades />
                 </p>
               )}

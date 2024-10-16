@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
+// import AppContext from '../../Context/appContext';
 import Project from '../Project';
 import { Owner, ProjectPlane } from '../Types/types';
 import './index.css';
@@ -10,7 +11,11 @@ const ProjectManagerHome = () => {
   const [player, setPlayer] = useState<Owner>();
   const [searchParams] = useSearchParams();
   const playerId: string | null = searchParams.get('ownerId');
-
+  // const [forTest, setForTest] = useState('');
+  // console.log(forTest);
+  // const onErrorOccurs = (e: string) => {
+  //   setErrMsg(e);
+  // };
   const { gameId } = useParams();
 
   const getTheProjectDataByPlayerId = async (gameId: string, playerId: string) => {
@@ -53,7 +58,7 @@ const ProjectManagerHome = () => {
               {allProjects[0].owner.role === 'PM' && (
                 <div className="project-display-main-container">
                   {allProjects.map((each: ProjectPlane) => (
-                    <Project key={each.id} proje={each} setErrMsg={setErrMsg} />
+                    <Project key={each.id} eachProject={each} setErrMsg={setErrMsg} />
                   ))}
                 </div>
               )}
@@ -77,6 +82,45 @@ const ProjectManagerHome = () => {
         </div>
       )}
     </div>
+    // <AppContext.Provider
+    //   value={{
+    //     allProjects,
+    //     changeErrorState: onErrorOccurs,
+    //   }}
+    // >
+    //   <div className="background-image">
+    //     {errMsg === '' ? (
+    //       <>
+    //         {allProjects.length > 0 ? (
+    //           <div className="main-container">
+    //             {allProjects[0].owner.role === 'PM' && (
+    //               <div className="project-display-main-container">
+    //                 {allProjects.map((each: ProjectPlane) => (
+    //                   <Project key={each.id} eachProject={each} setErrMsg={setErrMsg} />
+    //                 ))}
+    //               </div>
+    //             )}
+    //             <>
+    //               {player !== undefined && (
+    //                 <h3 className="playerName">
+    //                   {player.name}-{player.role}
+    //                 </h3>
+    //               )}
+    //             </>
+    //           </div>
+    //         ) : (
+    //           <div className="not-found-btn-container">
+    //             <button className="not-found-btn">Project Not Assigned</button>
+    //           </div>
+    //         )}
+    //       </>
+    //     ) : (
+    //       <div className="not-found-btn-container">
+    //         <button className="not-found-btn">{errMsg}</button>
+    //       </div>
+    //     )}
+    //   </div>
+    // </AppContext.Provider>
   );
 };
 

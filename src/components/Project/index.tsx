@@ -1,4 +1,3 @@
-import { Client } from '@stomp/stompjs';
 import { useEffect, useState } from 'react';
 import { BsFillSuitSpadeFill } from 'react-icons/bs';
 import { FaDiamond } from 'react-icons/fa6';
@@ -7,8 +6,6 @@ import { ImCross } from 'react-icons/im';
 // import { toast, ToastContainer } from 'react-toastify';
 import { useParams } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
-import SockJS from 'sockjs-client';
-import { v4 as uuidv4 } from 'uuid';
 import logo from '../../assets/texgo0cy.png';
 import ProjectView from '../ProjectView';
 import { Owner, projectType, ResourceCard } from '../Types/types';
@@ -49,42 +46,6 @@ const Project = (props: ProjectProps) => {
     setIsRequested(true);
     setResourceIndex(index);
     setResourceSkill(skill);
-  };
-
-  const sendRequestToRM = (index: number, skill: string) => {
-    // toast.dismiss();
-    const id = uuidv4();
-    const resourceCard = {
-      id: id,
-      targetProjectBoardId: projectId,
-      projectPlanId: project.id,
-      playerId: 'bharath3',
-      demand: {
-        time: index + 2,
-        skill: skill,
-      },
-    };
-    const socket = new SockJS('http://localhost:8080/rmg');
-    const stompClient = new Client({
-      webSocketFactory: () => socket,
-      onConnect: () => {
-        console.log('Connected to web Socket');
-        stompClient.subscribe('/topic/request', (message) => {
-          setRequestResponse(message.body);
-          console.log(message.body);
-        });
-        stompClient.publish({ destination: '/app/game/GameId1/request', body: JSON.stringify(resourceCard) });
-      },
-
-      onStompError: (frame) => {
-        console.error('Broker Error: ' + frame.headers['message']);
-      },
-    });
-    stompClient.activate();
-
-    setShowResourceCard(true);
-    setIsRequested(false);
-    setRequestId(id);
   };
 
   const cancelTheRequest = async () => {

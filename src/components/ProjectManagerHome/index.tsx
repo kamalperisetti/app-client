@@ -34,7 +34,7 @@ const ProjectManagerHome = () => {
     const response = await fetch(url, option);
     if (response.ok) {
       const data = await response.json();
-      console.log(data, 'ANJBSBK');
+
       setPlayer(data);
     } else {
       setErrMsg(await response.text());

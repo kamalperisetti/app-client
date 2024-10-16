@@ -20,8 +20,9 @@ const ProjectView = (props: ProposType) => {
   const [projectStartEndTime, setProjectStartEndTime] = useState({ start: project.initialStartTime, end: project.initialFinishTime });
   const [currentColumn, setCurrentColumn] = useState(projectStartTime); // Initialize column to 2
 
-  const cardSpan = parseInt(localStorage.getItem('projectLength') || '0');
+  // Make api call when user changed time
 
+  const cardSpan = parseInt(localStorage.getItem('projectLength') || '0');
   // const cardSpan = 4; // Card spans 3
   const nodeRef = useRef(null); // Ref for draggable card
 

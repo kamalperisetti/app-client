@@ -1,7 +1,9 @@
+import { Client } from '@stomp/stompjs';
 import { useRef, useState } from 'react';
 import Draggable from 'react-draggable';
+import SockJS from 'sockjs-client';
 import ProjectCard from '../projectCard';
-import { projectType } from '../Types/types';
+import { ProjectPlane, projectType } from '../Types/types';
 import './index.css';
 
 const months: number[] = [];
@@ -9,13 +11,16 @@ for (let i = 2; i <= 8; i++) {
   months.push(i);
 }
 
-interface ProposType {
-  project: projectType;
-  projectStartTime: number;
-}
+type PropsType = {
+  single: ProjectPlane;
+  changeTime: (data: String) => void;
+};
 
-const ProjectView = (props: ProposType) => {
-  const { project, projectStartTime } = props;
+const ProjectView = (props: PropsType) => {
+  const { single, changeTime } = props;
+
+  const { project, projectStartTime, id } = single;
+
   const [projectItem, setProject] = useState<projectType>(project);
   const [projectStartEndTime, setProjectStartEndTime] = useState({ start: project.initialStartTime, end: project.initialFinishTime });
   const [currentColumn, setCurrentColumn] = useState(projectStartTime); // Initialize column to 2
@@ -37,6 +42,26 @@ const ProjectView = (props: ProposType) => {
       let diff = project.initialFinishTime - project.initialStartTime;
       setProjectStartEndTime({ start: newColumn, end: newColumn + diff });
     }
+
+    const socket = new SockJS('http://localhost:8080/rmg');
+
+    const changeData = { playerId: 'bharath1', projectId: 'P1', startTime: newColumn };
+    const stompClient = new Client({
+      webSocketFactory: () => socket,
+      onConnect: () => {
+        console.log('connected for project change time ');
+        stompClient.subscribe('/topic/moveProject', (message) => {
+          //console.log(message.body);
+          changeTime(message.body);
+        });
+
+        stompClient.publish({
+          destination: `/app/games/GameId1/projectPlans/${id}/moveProject`,
+          body: JSON.stringify(changeData),
+        });
+      },
+    });
+    stompClient.activate();
   };
 
   return (

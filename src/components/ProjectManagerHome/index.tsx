@@ -8,6 +8,7 @@ const ProjectManagerHome = () => {
   const [allProjects, setAllProject] = useState<ProjectPlane[]>([]);
   const [errMsg, setErrMsg] = useState<string | null>(null);
   const [player, setPlayer] = useState<Owner>();
+  const [porjectChanged, setProjectChanged] = useState<String>('');
   const [searchParams] = useSearchParams();
   const playerId: string | null = searchParams.get('ownerId');
 
@@ -42,8 +43,10 @@ const ProjectManagerHome = () => {
   useEffect(() => {
     getTheProjectDataByPlayerId(gameId ?? '1', playerId ?? '1');
     getThePlayerByPlayerId(gameId ?? '1', playerId ?? '1');
-  }, []);
-
+  }, [porjectChanged]);
+  const changeTime = (data: string) => {
+    setProjectChanged(data);
+  };
   return (
     <div className="background-image">
       {errMsg === null ? (
@@ -53,7 +56,7 @@ const ProjectManagerHome = () => {
               {allProjects[0].owner.role === 'PM' && (
                 <div className="project-display-main-container">
                   {allProjects.map((each: ProjectPlane) => (
-                    <Project key={each.id} proje={each} setErrMsg={setErrMsg} />
+                    <Project key={each.id} eachProject={each} setErrMsg={setErrMsg} changeTime={changeTime} />
                   ))}
                 </div>
               )}

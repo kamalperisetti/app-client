@@ -1,20 +1,32 @@
-import { useEffect, useState } from 'react';
+import { Client } from '@stomp/stompjs';
+import { Dispatch, SetStateAction, useContext, useEffect, useState } from 'react';
 import { BsFillSuitSpadeFill } from 'react-icons/bs';
 import { FaDiamond } from 'react-icons/fa6';
 import { GoHeartFill } from 'react-icons/go';
 import { ImCross } from 'react-icons/im';
 import { useParams } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
+import SockJS from 'sockjs-client';
+import { v4 as uuidv4 } from 'uuid';
 import logo from '../../assets/texgo0cy.png';
+import AppContext from '../../context/app';
 import ProjectView from '../ProjectView';
 import { ProjectPlane } from '../Types/types';
 import './index.css';
 
-const Project = ({ proje, setErrMsg }: { proje: ProjectPlane; setErrMsg: React.Dispatch<React.SetStateAction<string | null>> }) => {
+interface ProjectManagerTyps {
+  eachProject: ProjectPlane;
+  setErrMsg: Dispatch<SetStateAction<string | null>>;
+  changeTime: (data: string) => void;
+}
+
+const Project = (props: ProjectManagerTyps) => {
+  const { eachProject, setErrMsg, changeTime } = props;
+  const { userName } = useContext(AppContext);
+
   let months = [2, 3, 4, 5, 6, 7, 8];
 
-  let { cards, id, project, projectStartTime, owner } = proje;
-  // console.log(owner);
+  let { cards, id, project, owner } = eachProject;
 
   const [resourceIndex, setResourceIndex] = useState<number>();
   const [resourceSkill, setResourceSkill] = useState<string>();
@@ -38,12 +50,13 @@ const Project = ({ proje, setErrMsg }: { proje: ProjectPlane; setErrMsg: React.D
   };
 
   const sendRequestToRM = (index: number, skill: string) => {
+    // toast.dismiss();
     const resourceCardId = uuidv4();
-    const cards = {
+    const resourceCard = {
       id: resourceCardId,
       targetProjectBoardId: id,
       projectPlanId: project.id,
-      playerId: 'bharath3',
+      playerId: owner.id,
       demand: {
         time: index + 2,
         skill: skill,
@@ -53,12 +66,13 @@ const Project = ({ proje, setErrMsg }: { proje: ProjectPlane; setErrMsg: React.D
     const stompClient = new Client({
       webSocketFactory: () => socket,
       onConnect: () => {
-        console.log('Connected to web Socket');
+        console.log('Connected to web Socket for request');
         stompClient.subscribe('/topic/request', (message) => {
           setRequestResponse(message.body);
-          console.log(message.body);
+          console.log(message.body, 'request response');
         });
-        stompClient.publish({ destination: '/app/game/GameId1/request', body: JSON.stringify(cards) });
+
+        stompClient.publish({ destination: `/app/game/GameId1/request/${id}`, body: JSON.stringify(resourceCard) });
       },
 
       onStompError: (frame) => {
@@ -123,8 +137,8 @@ const Project = ({ proje, setErrMsg }: { proje: ProjectPlane; setErrMsg: React.D
               className="resource-card-container"
               style={{
                 position: 'absolute',
-                top: cards.length === 1 ? '50px' : cardIndex === 0 ? '5px' : `${cardIndex * 19}px`,
-                left: cards.length === 1 ? '35px' : cardIndex === 0 ? '10px' : cardIndex >= 3 ? `${(cardIndex - 2.8) * 25}px` : `${cardIndex * 25}px`,
+                top: filteredCards.length === 1 ? '50px' : cardIndex === 0 ? '5px' : `${cardIndex * 19}px`,
+                left: filteredCards.length === 1 ? '35px' : cardIndex === 0 ? '10px' : cardIndex >= 3 ? `${(cardIndex - 2.8) * 25}px` : `${cardIndex * 25}px`,
               }}
             >
               <div className={`${skill === `HEART` || skill === `DIAMOND` ? `name-and-heart-container ` : `name-and-heart-container `}`}>
@@ -181,9 +195,10 @@ const Project = ({ proje, setErrMsg }: { proje: ProjectPlane; setErrMsg: React.D
       <div className="time-container">
         <p className="plan-title">Time (t) ——＞</p>
         <h3 className="plan-title">Project Plan</h3>
+        <p>{userName}</p>
         <img className="logo-image" src={logo} alt="company-logo" />
       </div>
-      <ProjectView project={project} projectStartTime={projectStartTime} />
+      <ProjectView single={eachProject} changeTime={changeTime} />
       <div>
         {cards !== undefined && (
           <div className="resource-card-main-container">

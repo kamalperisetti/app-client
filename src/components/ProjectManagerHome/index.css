@@ -1,5 +1,5 @@
 .background-image {
-  background-image: url('../src/assets/background.png');
+  background-image: url('../../assets/background.png');
   background-size: cover;
   min-height: 100vh;
   padding: 30px;

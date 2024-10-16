@@ -27,13 +27,13 @@ export type Owner = {
   scores: number[];
 };
 
-// export type Card = {
-//   homeBoardId: string;
-//   id: string;
-//   name: string;
-//   skill: string;
-//   time: number;
-// };
+export type Card = {
+  homeBoardId: string;
+  id: string;
+  name: string;
+  skill: string;
+  time: number;
+};
 
 export type ProjectPlane = {
   id: string;

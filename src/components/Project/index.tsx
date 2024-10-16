@@ -4,30 +4,21 @@ import { BsFillSuitSpadeFill } from 'react-icons/bs';
 import { FaDiamond } from 'react-icons/fa6';
 import { GoHeartFill } from 'react-icons/go';
 import { ImCross } from 'react-icons/im';
-// import { toast, ToastContainer } from 'react-toastify';
 import { useParams } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import SockJS from 'sockjs-client';
 import { v4 as uuidv4 } from 'uuid';
 import logo from '../../assets/texgo0cy.png';
 import ProjectView from '../ProjectView';
-import { Owner, projectType, ResourceCard } from '../Types/types';
+import { ProjectPlane } from '../Types/types';
 import './index.css';
 
-interface ProjectProps {
-  resourceCard: ResourceCard[];
-  projectId: string | undefined;
-  project: projectType;
-  projectStartTime: number;
-  owner: Owner;
-  // setErrMsg: string;
-  setErrMsg: React.Dispatch<React.SetStateAction<string | null>>;
-}
-
-const Project = (props: ProjectProps) => {
+const Project = ({ proje, setErrMsg }: { proje: ProjectPlane; setErrMsg: React.Dispatch<React.SetStateAction<string | null>> }) => {
   let months = [2, 3, 4, 5, 6, 7, 8];
 
-  let { resourceCard, projectId, project, projectStartTime, owner, setErrMsg } = props;
+  let { cards, id, project, projectStartTime, owner } = proje;
+  // console.log(owner);
+
   const [resourceIndex, setResourceIndex] = useState<number>();
   const [resourceSkill, setResourceSkill] = useState<string>();
   const [isRequested, setIsRequested] = useState<boolean>(false);
@@ -35,8 +26,6 @@ const Project = (props: ProjectProps) => {
   const [showResourceCard, setShowResourceCard] = useState<boolean>(false);
   const [requestId, setRequestId] = useState<string>('');
   const { gameId } = useParams();
-  // const gameId = 'sd';
-  // setErrMsg('Game Not Found');
   useEffect(() => {
     console.log('request triggered');
   }, [requestResponse]);
@@ -52,11 +41,10 @@ const Project = (props: ProjectProps) => {
   };
 
   const sendRequestToRM = (index: number, skill: string) => {
-    // toast.dismiss();
-    const id = uuidv4();
-    const resourceCard = {
-      id: id,
-      targetProjectBoardId: projectId,
+    const resourceCardId = uuidv4();
+    const cards = {
+      id: resourceCardId,
+      targetProjectBoardId: id,
       projectPlanId: project.id,
       playerId: 'bharath3',
       demand: {
@@ -73,7 +61,7 @@ const Project = (props: ProjectProps) => {
           setRequestResponse(message.body);
           console.log(message.body);
         });
-        stompClient.publish({ destination: '/app/game/GameId1/request', body: JSON.stringify(resourceCard) });
+        stompClient.publish({ destination: '/app/game/GameId1/request', body: JSON.stringify(cards) });
       },
 
       onStompError: (frame) => {
@@ -95,16 +83,16 @@ const Project = (props: ProjectProps) => {
     };
     const response = await fetch(url, option);
     const err = await response.text();
+    console.log(err);
     if (err.startsWith('Game')) {
       setErrMsg(err);
     }
   };
 
   const renderCards = (skill: 'HEART' | 'DIAMOND' | 'SPADE', month: number) => {
-    const cards = resourceCard.filter((c) => c.time === month && c.skill === skill);
+    const filteredCards = cards.filter((c) => c.time === month && c.skill === skill);
     const Icon = skill === 'HEART' ? GoHeartFill : skill === 'DIAMOND' ? FaDiamond : BsFillSuitSpadeFill;
-
-    if (cards.length > 0) {
+    if (filteredCards.length > 0) {
       return (
         <div className={`cards card${skill === 'HEART' ? '1' : skill === 'DIAMOND' ? '2' : '3'}`} onContextMenu={(e) => showRequestBtn(e, month, skill)}>
           {isRequested === true && resourceIndex === month && resourceSkill === skill && (
@@ -132,7 +120,7 @@ const Project = (props: ProjectProps) => {
               </div>
             </div>
           )}
-          {cards.map((card, cardIndex) => (
+          {filteredCards.map((card, cardIndex) => (
             <div
               key={cardIndex}
               className="resource-card-container"
@@ -200,7 +188,7 @@ const Project = (props: ProjectProps) => {
       </div>
       <ProjectView project={project} projectStartTime={projectStartTime} />
       <div>
-        {resourceCard !== undefined && (
+        {cards !== undefined && (
           <div className="resource-card-main-container">
             {months.map((month) => (
               <div key={month} className="cards-container">

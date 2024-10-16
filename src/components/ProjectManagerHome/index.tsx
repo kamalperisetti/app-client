@@ -5,9 +5,8 @@ import { Owner, ProjectPlane } from '../Types/types';
 import './index.css';
 
 const ProjectManagerHome = () => {
-  const [allProjects, setAllProject] = useState<ProjectPlane[]>([]); // To store all projects
+  const [allProjects, setAllProject] = useState<ProjectPlane[]>([]);
   const [errMsg, setErrMsg] = useState<string | null>(null);
-  // console.log(allProjects, 'JIII');
   const [player, setPlayer] = useState<Owner>();
   const [searchParams] = useSearchParams();
   const playerId: string | null = searchParams.get('ownerId');
@@ -34,7 +33,6 @@ const ProjectManagerHome = () => {
     const response = await fetch(url, option);
     if (response.ok) {
       const data = await response.json();
-      console.log(data, 'ANJBSBK');
       setPlayer(data);
     } else {
       setErrMsg(await response.text());
@@ -50,20 +48,12 @@ const ProjectManagerHome = () => {
     <div className="background-image">
       {errMsg === null ? (
         <>
-          {allProjects.length > 0 && (
+          {allProjects.length > 0 ? (
             <div className="main-container">
-              {allProjects[0].owner.role.startsWith('PM') && (
+              {allProjects[0].owner.role === 'PM' && (
                 <div className="project-display-main-container">
                   {allProjects.map((each: ProjectPlane) => (
-                    <Project
-                      key={each.id}
-                      resourceCard={each.cards}
-                      projectId={each.id}
-                      project={each.project}
-                      projectStartTime={each.projectStartTime}
-                      owner={each.owner}
-                      setErrMsg={setErrMsg}
-                    />
+                    <Project key={each.id} proje={each} setErrMsg={setErrMsg} />
                   ))}
                 </div>
               )}
@@ -74,6 +64,10 @@ const ProjectManagerHome = () => {
                   </h3>
                 )}
               </>
+            </div>
+          ) : (
+            <div className="not-found-btn-container">
+              <button className="not-found-btn">Project Not Assigned</button>
             </div>
           )}
         </>

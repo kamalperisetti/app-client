@@ -6,7 +6,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/game/:gameId" element={<ProjectManagerHome />} />
+        <Route path="/game/pm/:gameId" element={<ProjectManagerHome />} />
       </Routes>
     </BrowserRouter>
   );

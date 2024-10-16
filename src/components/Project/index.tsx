@@ -1,5 +1,5 @@
 import { Client } from '@stomp/stompjs';
-import { useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { BsFillSuitSpadeFill } from 'react-icons/bs';
 import { FaDiamond } from 'react-icons/fa6';
@@ -15,9 +15,15 @@ import ProjectView from '../ProjectView';
 import { ProjectPlane } from '../Types/types';
 import './index.css';
 
-const Project = ({ eachProject, setErrMsg }: { eachProject: ProjectPlane; setErrMsg: React.Dispatch<React.SetStateAction<string | null>> }) => {
-  let months = [2, 3, 4, 5, 6, 7, 8];
+interface ProjectManagerTyps {
+  eachProject: ProjectPlane;
+  setErrMsg: Dispatch<SetStateAction<string | null>>;
+  changeTime: (data: string) => void;
+}
 
+const Project = (props: ProjectManagerTyps) => {
+  let months = [2, 3, 4, 5, 6, 7, 8];
+  const { eachProject, setErrMsg, changeTime } = props;
   let { cards, id, project, projectStartTime, owner } = eachProject;
   // console.log(owner);
 
@@ -120,6 +126,36 @@ const Project = ({ eachProject, setErrMsg }: { eachProject: ProjectPlane; setErr
     setShowResourceCard(true);
     setIsRequested(false);
     setRequestId(id);
+  };
+
+  const resolvedRequest = () => {
+    console.log('JAI BAHVANI');
+    const socket = new SockJS('http://localhost:8080/rmg');
+    const stompClient = new Client({
+      webSocketFactory: () => socket,
+      onConnect: () => {
+        console.log('Connected to web Socket');
+        stompClient.subscribe('/topic/resolved', (message) => {
+          // setRequestResponse(message.body);
+          changeTime(message.body);
+          if (message.body === 'resolved') {
+            setShowResourceCard(false);
+            console.log('HIII');
+          }
+          console.log(message.body, 'MY Message');
+        });
+        stompClient.publish({ destination: '/app/game/hello' });
+      },
+
+      onStompError: (frame) => {
+        console.error('Broker Error: ' + frame.headers['message']);
+      },
+    });
+    stompClient.activate();
+
+    // setShowResourceCard(true);
+    // setIsRequested(false);
+    // setRequestId(id);
   };
 
   const cancelTheRequest = async () => {
@@ -269,6 +305,7 @@ const Project = ({ eachProject, setErrMsg }: { eachProject: ProjectPlane; setErr
           </div>
         )}
       </div>
+      <button onClick={resolvedRequest}>HIIII</button>
       <Toaster />
     </div>
   );

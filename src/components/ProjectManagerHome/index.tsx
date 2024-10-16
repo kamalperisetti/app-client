@@ -9,6 +9,7 @@ const ProjectManagerHome = () => {
   const [allProjects, setAllProject] = useState<ProjectPlane[]>([]);
   const [errMsg, setErrMsg] = useState<string | null>(null);
   const [player, setPlayer] = useState<Owner>();
+  const [porjectChanged, setProjectChanged] = useState<String>('');
   const [searchParams] = useSearchParams();
   const playerId: string | null = searchParams.get('ownerId');
   const [porjectChanged, setProjectChanged] = useState<String>('');
@@ -52,9 +53,12 @@ const ProjectManagerHome = () => {
   useEffect(() => {
     getTheProjectDataByPlayerId(gameId ?? '1', playerId ?? '1');
     getThePlayerByPlayerId(gameId ?? '1', playerId ?? '1');
-    setProjectChanged('');
+    console.log('called');
   }, [porjectChanged]);
-
+  const changeTime = (data: string) => {
+    console.log(data);
+    setProjectChanged(data);
+  };
   return (
     <div className="background-image">
       {errMsg === null ? (

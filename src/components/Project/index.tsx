@@ -1,5 +1,5 @@
 import { Client } from '@stomp/stompjs';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useContext, useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { BsFillSuitSpadeFill } from 'react-icons/bs';
 import { FaDiamond } from 'react-icons/fa6';
@@ -10,7 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import SockJS from 'sockjs-client';
 import { v4 as uuidv4 } from 'uuid';
 import logo from '../../assets/texgo0cy.png';
-// import AppContext from '../../Context/appContext';
+import AppContext from '../../context/app';
 import ProjectView from '../ProjectView';
 import { ProjectPlane } from '../Types/types';
 import './index.css';
@@ -22,10 +22,12 @@ interface ProjectManagerTyps {
 }
 
 const Project = (props: ProjectManagerTyps) => {
-  let months = [2, 3, 4, 5, 6, 7, 8];
   const { eachProject, setErrMsg, changeTime } = props;
-  let { cards, id, project, projectStartTime, owner } = eachProject;
-  // console.log(owner);
+  const { userName } = useContext(AppContext);
+
+  let months = [2, 3, 4, 5, 6, 7, 8];
+
+  let { cards, id, project, owner, projectStartTime } = eachProject;
 
   const [resourceIndex, setResourceIndex] = useState<number>();
   const [resourceSkill, setResourceSkill] = useState<string>();
@@ -93,12 +95,13 @@ const Project = (props: ProjectManagerTyps) => {
   };
 
   const sendRequestToRM = (month: number, skill: string) => {
+    // toast.dismiss();
     const resourceCardId = uuidv4();
-    const cards = {
+    const resourceCard = {
       id: resourceCardId,
       targetProjectBoardId: id,
       projectPlanId: project.id,
-      playerId: 'bharath3',
+      playerId: owner.id,
       demand: {
         time: month,
         skill: skill,
@@ -109,12 +112,13 @@ const Project = (props: ProjectManagerTyps) => {
     const stompClient = new Client({
       webSocketFactory: () => socket,
       onConnect: () => {
-        console.log('Connected to web Socket');
+        console.log('Connected to web Socket for request');
         stompClient.subscribe('/topic/request', (message) => {
           setRequestResponse(message.body);
-          console.log(message.body);
+          console.log(message.body, 'request response');
         });
-        stompClient.publish({ destination: '/app/game/GameId1/request', body: JSON.stringify(cards) });
+
+        stompClient.publish({ destination: `/app/game/GameId1/request/${id}`, body: JSON.stringify(resourceCard) });
       },
 
       onStompError: (frame) => {
@@ -289,9 +293,10 @@ const Project = (props: ProjectManagerTyps) => {
       <div className="time-container">
         <p className="plan-title">Time (t) ——＞</p>
         <h3 className="plan-title">Project Plan</h3>
+        <p>{userName}</p>
         <img className="logo-image" src={logo} alt="company-logo" />
       </div>
-      <ProjectView project={project} projectStartTime={projectStartTime} />
+      <ProjectView single={eachProject} changeTime={changeTime} />
       <div>
         {cards !== undefined && (
           <div className="resource-card-main-container">

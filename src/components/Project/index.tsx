@@ -18,11 +18,11 @@ interface ProjectManagerTyps {
   eachProject: ProjectPlane;
   setErrMsg: Dispatch<SetStateAction<string | null>>;
   socketClient: Client | null;
-  setRequestFullfilled: Dispatch<SetStateAction<string | null>>;
+  onRequestFullfilled: (data: string) => void;
 }
 
 const Project = (props: ProjectManagerTyps) => {
-  const { eachProject, setErrMsg, socketClient, setRequestFullfilled } = props;
+  const { eachProject, setErrMsg, socketClient, onRequestFullfilled } = props;
   // const { userName } = useContext(AppContext);
 
   let months = [2, 3, 4, 5, 6, 7, 8];
@@ -111,7 +111,7 @@ const Project = (props: ProjectManagerTyps) => {
         }
       });
       socketClient.subscribe(`/topic/fulFilledRequest/${id}`, (message) => {
-        setRequestFullfilled(message.body);
+        onRequestFullfilled(JSON.parse(message.body).body);
       });
       socketClient.publish({ destination: `/app/game/GameId1/request/${id}`, body: JSON.stringify(resourceCard) });
     }

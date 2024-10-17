@@ -14,7 +14,7 @@ const ProjectManagerHome = () => {
 
   const [searchParams] = useSearchParams();
   const [requestFullfilled, setRequestFullfilled] = useState('');
-  const [socketObject, setSocketObject] = useState<Client | null>();
+  const [socketObject, setSocketObject] = useState<Client | null>(null);
   const playerId: string | null = searchParams.get('ownerId');
   const [porjectChanged, setProjectChanged] = useState<String>('');
   console.log(porjectChanged);
@@ -77,6 +77,11 @@ const ProjectManagerHome = () => {
     getThePlayerByPlayerId(gameId ?? '1', playerId ?? '1');
     establishWebSocket();
   }, [porjectChanged, requestFullfilled]);
+
+  const onRequestFullfilled = (data: string) => {
+    setRequestFullfilled(data);
+  };
+
   return (
     <div className="background-image">
       {errMsg === null ? (
@@ -86,7 +91,7 @@ const ProjectManagerHome = () => {
               {allProjects[0].owner.role === 'PM' && (
                 <div className="project-display-main-container">
                   {allProjects.map((each: ProjectPlane) => (
-                    <Project key={each.id} eachProject={each} setErrMsg={setErrMsg} socketClient={socketObject} setRequestFullfilled={setRequestFullfilled} />
+                    <Project key={each.id} eachProject={each} setErrMsg={setErrMsg} socketClient={socketObject} onRequestFullfilled={onRequestFullfilled} />
                   ))}
                 </div>
               )}

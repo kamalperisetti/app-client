@@ -1,5 +1,5 @@
 import { Client } from '@stomp/stompjs';
-import { Dispatch, SetStateAction, useContext, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useContext, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { BsFillSuitSpadeFill } from 'react-icons/bs';
 import { FaDiamond } from 'react-icons/fa6';
@@ -7,7 +7,6 @@ import { GoHeartFill } from 'react-icons/go';
 import { ImCross } from 'react-icons/im';
 import { useParams } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
-import SockJS from 'sockjs-client';
 import { v4 as uuidv4 } from 'uuid';
 import logo from '../../assets/texgo0cy.png';
 import AppContext from '../../context/app';
@@ -18,29 +17,24 @@ import './index.css';
 interface ProjectManagerTyps {
   eachProject: ProjectPlane;
   setErrMsg: Dispatch<SetStateAction<string | null>>;
-  changeTime: (data: string) => void;
+  socketClient: Client | null;
+  setRequestFullfilled: Dispatch<SetStateAction<string | null>>;
 }
 
 const Project = (props: ProjectManagerTyps) => {
-  const { eachProject, setErrMsg, changeTime } = props;
+  const { eachProject, setErrMsg, socketClient, setRequestFullfilled } = props;
   const { userName } = useContext(AppContext);
 
   let months = [2, 3, 4, 5, 6, 7, 8];
 
   let { cards, id, project, owner, projectStartTime } = eachProject;
-
   const [resourceIndex, setResourceIndex] = useState<number>();
   const [resourceSkill, setResourceSkill] = useState<string>();
   const [isRequested, setIsRequested] = useState<boolean>(false);
-  const [requestResponse, setRequestResponse] = useState('');
+
   const [showResourceCard, setShowResourceCard] = useState<boolean>(false);
   const [requestId, setRequestId] = useState<string>('');
   const { gameId } = useParams();
-  // const { allProjects, changeErrorState } = useContext(AppContext);
-  // console.log(allProjects, 'HII MY GOODD BOYS');
-  useEffect(() => {
-    console.log('request triggered');
-  }, [requestResponse]);
 
   const showRequestBtn = (e: React.MouseEvent<HTMLDivElement>, index: number, skill: string) => {
     e.preventDefault();
@@ -107,29 +101,17 @@ const Project = (props: ProjectManagerTyps) => {
         skill: skill,
       },
     };
-    console.log(cards, 'KII');
-    const socket = new SockJS('http://localhost:8080/rmg');
-    const stompClient = new Client({
-      webSocketFactory: () => socket,
-      onConnect: () => {
-        console.log('Connected to web Socket for request');
-        stompClient.subscribe('/topic/request', (message) => {
-          setRequestResponse(message.body);
-          console.log(message.body, 'request response');
-        });
+    // console.log(cards, 'KII');
 
-        stompClient.publish({ destination: `/app/game/GameId1/request/${id}`, body: JSON.stringify(resourceCard) });
-      },
-
-      onStompError: (frame) => {
-        console.error('Broker Error: ' + frame.headers['message']);
-      },
-    });
-    stompClient.activate();
-
+    if (socketClient) {
+      socketClient.subscribe(`/topic/fulFilledRequest/${id}`, (message) => {
+        setRequestFullfilled(message.body);
+      });
+      socketClient.publish({ destination: `/app/game/GameId1/request/${id}`, body: JSON.stringify(resourceCard) });
+    }
     setShowResourceCard(true);
     setIsRequested(false);
-    setRequestId(id);
+    setRequestId(resourceCardId);
   };
 
   const cancelTheRequest = async () => {
@@ -266,7 +248,7 @@ const Project = (props: ProjectManagerTyps) => {
         <p>{userName}</p>
         <img className="logo-image" src={logo} alt="company-logo" />
       </div>
-      <ProjectView single={eachProject} changeTime={changeTime} />
+      <ProjectView single={eachProject} socketClient={socketClient} />
       <div>
         {cards !== undefined && (
           <div className="resource-card-main-container">

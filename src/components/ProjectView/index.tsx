@@ -1,7 +1,7 @@
-import { Client } from '@stomp/stompjs';
 import { useRef, useState } from 'react';
 import Draggable from 'react-draggable';
-import SockJS from 'sockjs-client';
+
+import { Client } from '@stomp/stompjs';
 import ProjectCard from '../projectCard';
 import { ProjectPlane, projectType } from '../Types/types';
 import './index.css';
@@ -13,11 +13,11 @@ for (let i = 2; i <= 8; i++) {
 
 type PropsType = {
   single: ProjectPlane;
-  changeTime: (data: String) => void;
+  socketClient: Client | null;
 };
 
 const ProjectView = (props: PropsType) => {
-  const { single, changeTime } = props;
+  const { single, socketClient } = props;
 
   const { project, projectStartTime, id } = single;
 
@@ -43,25 +43,11 @@ const ProjectView = (props: PropsType) => {
       setProjectStartEndTime({ start: newColumn, end: newColumn + diff });
     }
 
-    const socket = new SockJS('http://localhost:8080/rmg');
-
     const changeData = { playerId: 'bharath1', projectId: 'P1', startTime: newColumn };
-    const stompClient = new Client({
-      webSocketFactory: () => socket,
-      onConnect: () => {
-        console.log('connected for project change time ');
-        stompClient.subscribe('/topic/moveProject', (message) => {
-          //console.log(message.body);
-          changeTime(message.body);
-        });
-
-        stompClient.publish({
-          destination: `/app/games/GameId1/projectPlans/${id}/moveProject`,
-          body: JSON.stringify(changeData),
-        });
-      },
+    socketClient?.publish({
+      destination: `/app/games/GameId1/projectPlans/${id}/moveProject`,
+      body: JSON.stringify(changeData),
     });
-    stompClient.activate();
   };
 
   return (

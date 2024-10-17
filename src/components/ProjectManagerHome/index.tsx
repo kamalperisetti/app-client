@@ -1,5 +1,7 @@
+import { Client } from '@stomp/stompjs';
 import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
+import SockJS from 'sockjs-client';
 // import AppContext from '../../Context/appContext';
 import Project from '../Project';
 import { Owner, ProjectPlane } from '../Types/types';
@@ -11,6 +13,8 @@ const ProjectManagerHome = () => {
   const [player, setPlayer] = useState<Owner>();
   const [porjectChanged, setProjectChanged] = useState<String>('');
   const [searchParams] = useSearchParams();
+  const [requestFullfilled, setRequestFullfilled] = useState('');
+  const [socketObject, setSocketObject] = useState<Client | null>();
   const playerId: string | null = searchParams.get('ownerId');
   // const [forTest, setForTest] = useState('');
   // console.log(forTest);
@@ -45,15 +49,38 @@ const ProjectManagerHome = () => {
     }
   };
 
+  // Establish websocket connection
+  const establishWebSocket = () => {
+    const socket = new SockJS('http://localhost:8080/rmg');
+    const stompClient = new Client({
+      webSocketFactory: () => socket,
+      onConnect: () => {
+        console.log('connected for project change time ');
+        stompClient.subscribe('/topic/moveProject', (message) => {
+          //console.log(message.body);
+          //changeTime(message.body);
+          setProjectChanged(message.body);
+        });
+        stompClient.subscribe('/topic/request', (message) => {
+          console.log(message.body);
+        });
+
+        // stompClient.publish({
+        //   destination: `/app/games/GameId1/projectPlans/${id}/moveProject`,
+        //   body: JSON.stringify(changeData),
+        // });
+      },
+    });
+    stompClient.activate();
+    console.log(porjectChanged);
+    setSocketObject(stompClient);
+  };
+
   useEffect(() => {
     getTheProjectDataByPlayerId(gameId ?? '1', playerId ?? '1');
     getThePlayerByPlayerId(gameId ?? '1', playerId ?? '1');
-    console.log('called');
-  }, [porjectChanged]);
-  const changeTime = (data: string) => {
-    console.log(data);
-    setProjectChanged(data);
-  };
+    establishWebSocket();
+  }, [porjectChanged, requestFullfilled]);
   return (
     <div className="background-image">
       {errMsg === null ? (
@@ -63,7 +90,7 @@ const ProjectManagerHome = () => {
               {allProjects[0].owner.role === 'PM' && (
                 <div className="project-display-main-container">
                   {allProjects.map((each: ProjectPlane) => (
-                    <Project key={each.id} eachProject={each} setErrMsg={setErrMsg} changeTime={changeTime} />
+                    <Project key={each.id} eachProject={each} setErrMsg={setErrMsg} socketClient={socketObject} setRequestFullfilled={setRequestFullfilled} />
                   ))}
                 </div>
               )}

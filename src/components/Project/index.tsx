@@ -1,5 +1,5 @@
 import { Client } from '@stomp/stompjs';
-import { Dispatch, SetStateAction, useContext, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { BsFillSuitSpadeFill } from 'react-icons/bs';
 import { FaDiamond } from 'react-icons/fa6';
@@ -10,7 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import SockJS from 'sockjs-client';
 import { v4 as uuidv4 } from 'uuid';
 import logo from '../../assets/texgo0cy.png';
-import AppContext from '../../context/app';
+
 import ProjectView from '../ProjectView';
 import { ProjectPlane } from '../Types/types';
 import './index.css';
@@ -23,7 +23,6 @@ interface ProjectManagerTyps {
 
 const Project = (props: ProjectManagerTyps) => {
   const { eachProject, setErrMsg, changeTime } = props;
-  const { userName } = useContext(AppContext);
 
   let months = [2, 3, 4, 5, 6, 7, 8];
 
@@ -36,8 +35,7 @@ const Project = (props: ProjectManagerTyps) => {
   const [showResourceCard, setShowResourceCard] = useState<boolean>(false);
   const [requestId, setRequestId] = useState<string>('');
   const { gameId } = useParams();
-  // const { allProjects, changeErrorState } = useContext(AppContext);
-  // console.log(allProjects, 'HII MY GOODD BOYS');
+
   useEffect(() => {
     console.log('request triggered');
   }, [requestResponse]);
@@ -45,22 +43,15 @@ const Project = (props: ProjectManagerTyps) => {
   const showRequestBtn = (e: React.MouseEvent<HTMLDivElement>, index: number, skill: string) => {
     e.preventDefault();
     let projectStartMonth = projectStartTime;
-    console.log(projectStartMonth);
-    // changeErrorState('MY BOSSS');
-
-    const diffrence = project.initialFinishTime - projectStartTime;
+    const diffrence = project.initialFinishTime - project.initialStartTime;
     const projectEndTime = projectStartTime + diffrence;
+
     let isTrue = false;
     for (projectStartMonth; projectStartMonth <= projectEndTime; projectStartMonth++) {
       if (projectStartMonth === index) {
         isTrue = true;
       }
     }
-
-    // console.log(isRequested);
-    // console.log(isTrue, 'checking is true');
-    // console.log(index);
-
     if (isRequested || showResourceCard) {
       toast.error('You can make one request at a time', {
         style: {
@@ -95,7 +86,6 @@ const Project = (props: ProjectManagerTyps) => {
   };
 
   const sendRequestToRM = (month: number, skill: string) => {
-    // toast.dismiss();
     const resourceCardId = uuidv4();
     const resourceCard = {
       id: resourceCardId,
@@ -112,10 +102,22 @@ const Project = (props: ProjectManagerTyps) => {
     const stompClient = new Client({
       webSocketFactory: () => socket,
       onConnect: () => {
-        console.log('Connected to web Socket for request');
+        // console.log('Connected to web Socket for request');
         stompClient.subscribe('/topic/request', (message) => {
           setRequestResponse(message.body);
-          console.log(message.body, 'request response');
+          if (JSON.parse(message.body).body === 'After Responding on you pending request you can make another request') {
+            setIsRequested(false);
+            setShowResourceCard(false);
+            toast.error(JSON.parse(message.body).body, {
+              style: {
+                borderRadius: '10px',
+                fontSize: '18px',
+                minWidth: '600px',
+                textAlign: 'center',
+              },
+              duration: 1500,
+            });
+          }
         });
 
         stompClient.publish({ destination: `/app/game/GameId1/request/${id}`, body: JSON.stringify(resourceCard) });
@@ -129,41 +131,12 @@ const Project = (props: ProjectManagerTyps) => {
 
     setShowResourceCard(true);
     setIsRequested(false);
-    setRequestId(id);
-  };
-
-  const resolvedRequest = () => {
-    console.log('JAI BAHVANI');
-    const socket = new SockJS('http://localhost:8080/rmg');
-    const stompClient = new Client({
-      webSocketFactory: () => socket,
-      onConnect: () => {
-        console.log('Connected to web Socket');
-        stompClient.subscribe('/topic/resolved', (message) => {
-          // setRequestResponse(message.body);
-          changeTime(message.body);
-          if (message.body === 'resolved') {
-            setShowResourceCard(false);
-            console.log('HIII');
-          }
-          console.log(message.body, 'MY Message');
-        });
-        stompClient.publish({ destination: '/app/game/hello' });
-      },
-
-      onStompError: (frame) => {
-        console.error('Broker Error: ' + frame.headers['message']);
-      },
-    });
-    stompClient.activate();
-
-    // setShowResourceCard(true);
-    // setIsRequested(false);
-    // setRequestId(id);
+    setRequestId(resourceCardId);
   };
 
   const cancelTheRequest = async () => {
     setShowResourceCard(false);
+    console.log(requestId, 'What Im Accessing');
     const url = `http://localhost:8080/game/${gameId}/request/${requestId}/return`;
     const option = {
       method: 'GET',
@@ -178,7 +151,6 @@ const Project = (props: ProjectManagerTyps) => {
           fontSize: '18px',
           minWidth: '600px',
           textAlign: 'center',
-          // color: '#fff',
         },
         duration: 1500,
       });
@@ -293,7 +265,6 @@ const Project = (props: ProjectManagerTyps) => {
       <div className="time-container">
         <p className="plan-title">Time (t) ——＞</p>
         <h3 className="plan-title">Project Plan</h3>
-        <p>{userName}</p>
         <img className="logo-image" src={logo} alt="company-logo" />
       </div>
       <ProjectView single={eachProject} changeTime={changeTime} />
@@ -310,7 +281,6 @@ const Project = (props: ProjectManagerTyps) => {
           </div>
         )}
       </div>
-      <button onClick={resolvedRequest}>HIIII</button>
       <Toaster />
     </div>
   );

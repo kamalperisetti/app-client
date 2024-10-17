@@ -9,15 +9,12 @@ const ProjectManagerHome = () => {
   const [allProjects, setAllProject] = useState<ProjectPlane[]>([]);
   const [errMsg, setErrMsg] = useState<string | null>(null);
   const [player, setPlayer] = useState<Owner>();
-  const [porjectChanged, setProjectChanged] = useState<String>('');
+
   const [searchParams] = useSearchParams();
   const playerId: string | null = searchParams.get('ownerId');
   const [porjectChanged, setProjectChanged] = useState<String>('');
-  // const [forTest, setForTest] = useState('');
-  // console.log(forTest);
-  // const onErrorOccurs = (e: string) => {
-  //   setErrMsg(e);
-  // };
+  console.log(porjectChanged);
+
   const { gameId } = useParams();
 
   const getTheProjectDataByPlayerId = async (gameId: string, playerId: string) => {
@@ -45,17 +42,13 @@ const ProjectManagerHome = () => {
       setErrMsg(await response.text());
     }
   };
-  const changeTime = (data: string) => {
-    console.log(data);
-    setProjectChanged(data);
-  };
 
   useEffect(() => {
     getTheProjectDataByPlayerId(gameId ?? '1', playerId ?? '1');
     getThePlayerByPlayerId(gameId ?? '1', playerId ?? '1');
     console.log('called');
   }, [porjectChanged]);
-  const changeTime = (data: string) => {
+  const changeTime = (data: String) => {
     console.log(data);
     setProjectChanged(data);
   };
@@ -92,45 +85,6 @@ const ProjectManagerHome = () => {
         </div>
       )}
     </div>
-    // <AppContext.Provider
-    //   value={{
-    //     allProjects,
-    //     changeErrorState: onErrorOccurs,
-    //   }}
-    // >
-    //   <div className="background-image">
-    //     {errMsg === '' ? (
-    //       <>
-    //         {allProjects.length > 0 ? (
-    //           <div className="main-container">
-    //             {allProjects[0].owner.role === 'PM' && (
-    //               <div className="project-display-main-container">
-    //                 {allProjects.map((each: ProjectPlane) => (
-    //                   <Project key={each.id} eachProject={each} setErrMsg={setErrMsg} />
-    //                 ))}
-    //               </div>
-    //             )}
-    //             <>
-    //               {player !== undefined && (
-    //                 <h3 className="playerName">
-    //                   {player.name}-{player.role}
-    //                 </h3>
-    //               )}
-    //             </>
-    //           </div>
-    //         ) : (
-    //           <div className="not-found-btn-container">
-    //             <button className="not-found-btn">Project Not Assigned</button>
-    //           </div>
-    //         )}
-    //       </>
-    //     ) : (
-    //       <div className="not-found-btn-container">
-    //         <button className="not-found-btn">{errMsg}</button>
-    //       </div>
-    //     )}
-    //   </div>
-    // </AppContext.Provider>
   );
 };
 

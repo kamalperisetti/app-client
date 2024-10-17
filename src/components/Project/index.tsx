@@ -1,5 +1,5 @@
 import { Client } from '@stomp/stompjs';
-import { Dispatch, SetStateAction, useContext, useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { BsFillSuitSpadeFill } from 'react-icons/bs';
 import { FaDiamond } from 'react-icons/fa6';
@@ -9,7 +9,7 @@ import { useParams } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import { v4 as uuidv4 } from 'uuid';
 import logo from '../../assets/texgo0cy.png';
-import AppContext from '../../context/app';
+
 import ProjectView from '../ProjectView';
 import { ProjectPlane } from '../Types/types';
 import './index.css';
@@ -23,7 +23,7 @@ interface ProjectManagerTyps {
 
 const Project = (props: ProjectManagerTyps) => {
   const { eachProject, setErrMsg, socketClient, setRequestFullfilled } = props;
-  const { userName } = useContext(AppContext);
+  // const { userName } = useContext(AppContext);
 
   let months = [2, 3, 4, 5, 6, 7, 8];
 
@@ -39,22 +39,15 @@ const Project = (props: ProjectManagerTyps) => {
   const showRequestBtn = (e: React.MouseEvent<HTMLDivElement>, index: number, skill: string) => {
     e.preventDefault();
     let projectStartMonth = projectStartTime;
-    console.log(projectStartMonth);
-    // changeErrorState('MY BOSSS');
-
-    const diffrence = project.initialFinishTime - projectStartTime;
+    const diffrence = project.initialFinishTime - project.initialStartTime;
     const projectEndTime = projectStartTime + diffrence;
+
     let isTrue = false;
     for (projectStartMonth; projectStartMonth <= projectEndTime; projectStartMonth++) {
       if (projectStartMonth === index) {
         isTrue = true;
       }
     }
-
-    // console.log(isRequested);
-    // console.log(isTrue, 'checking is true');
-    // console.log(index);
-
     if (isRequested || showResourceCard) {
       toast.error('You can make one request at a time', {
         style: {
@@ -89,7 +82,6 @@ const Project = (props: ProjectManagerTyps) => {
   };
 
   const sendRequestToRM = (month: number, skill: string) => {
-    // toast.dismiss();
     const resourceCardId = uuidv4();
     const resourceCard = {
       id: resourceCardId,
@@ -101,9 +93,23 @@ const Project = (props: ProjectManagerTyps) => {
         skill: skill,
       },
     };
-    // console.log(cards, 'KII');
 
     if (socketClient) {
+      socketClient.subscribe('/topic/request', (message) => {
+        if (JSON.parse(message.body).body === 'After Responding on you pending request you can make another request') {
+          setIsRequested(false);
+          setShowResourceCard(false);
+          toast.error(JSON.parse(message.body).body, {
+            style: {
+              borderRadius: '10px',
+              fontSize: '18px',
+              minWidth: '600px',
+              textAlign: 'center',
+            },
+            duration: 1500,
+          });
+        }
+      });
       socketClient.subscribe(`/topic/fulFilledRequest/${id}`, (message) => {
         setRequestFullfilled(message.body);
       });
@@ -112,10 +118,12 @@ const Project = (props: ProjectManagerTyps) => {
     setShowResourceCard(true);
     setIsRequested(false);
     setRequestId(resourceCardId);
+    setRequestId(resourceCardId);
   };
 
   const cancelTheRequest = async () => {
     setShowResourceCard(false);
+    console.log(requestId, 'What Im Accessing');
     const url = `http://localhost:8080/game/${gameId}/request/${requestId}/return`;
     const option = {
       method: 'GET',
@@ -130,7 +138,6 @@ const Project = (props: ProjectManagerTyps) => {
           fontSize: '18px',
           minWidth: '600px',
           textAlign: 'center',
-          // color: '#fff',
         },
         duration: 1500,
       });
@@ -245,7 +252,6 @@ const Project = (props: ProjectManagerTyps) => {
       <div className="time-container">
         <p className="plan-title">Time (t) ——＞</p>
         <h3 className="plan-title">Project Plan</h3>
-        <p>{userName}</p>
         <img className="logo-image" src={logo} alt="company-logo" />
       </div>
       <ProjectView single={eachProject} socketClient={socketClient} />
